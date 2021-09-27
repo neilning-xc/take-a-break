@@ -1,0 +1,120 @@
+/*
+ * @NOTE: Prepend a `~` to css file paths that are in your node_modules
+ *        See https://github.com/webpack-contrib/sass-loader#imports
+ */
+
+$primary-color: #ededed;
+$color: rgb(82, 82, 82);
+
+body {
+  position: relative;
+  color: white;
+  height: 100vh;
+  /* background: linear-gradient(
+    200.96deg,
+    #fedc2a -29.09%,
+    #dd5789 51.77%,
+    #7a2c9e 129.35%
+  ); */
+  background-color: $primary-color;
+  font-family: sans-serif;
+  overflow-y: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: $color;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.neu {
+  height: 200px;
+  width: 200px;
+  border-radius: 200px;
+  background: $primary-color;
+  box-shadow: 20px 20px 39px #c9c9c9, -20px -20px 39px #ffffff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  h3 {
+    font-size: 40px;
+    font-weight: 100;
+  }
+}
+
+.toolbar {
+  width: 250px;
+  margin-top: 40px;
+  display: flex;
+  justify-content: space-between;
+
+  button {
+    width: 70px;
+    height: 50px;
+  }
+}
+
+button.neu-button {
+  cursor: pointer;
+  border: none;
+  outline: none;
+  border-radius: 150px;
+  background: #ededed;
+  box-shadow: 6px 6px 12px #c9c9c9, -6px -6px 12px #ffffff;
+
+  &:hover {
+    box-shadow: 10px 10px 20px #c9c9c9, -10px -10px 20px #ffffff;
+  }
+
+  &:active {
+    box-shadow: inset 8px 8px 8px #cbced1, inset -8px -8px 8px #ffffff;
+  }
+}
+
+.setting {
+  background: #ecf0f3;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .row {
+    margin-bottom: 20px;
+  }
+
+  form {
+    label {
+      display: block;
+      margin-bottom: 5px;
+      padding: 0 10px;
+    }
+
+    .field {
+      color: #555;
+      border-radius: 25px;
+      box-shadow: inset 8px 8px 8px #cbced1, inset -8px -8px 8px #ffffff;
+
+      input {
+        border: none;
+        outline: none;
+        background: none;
+        height: 50px;
+        width: 300px;
+        padding: 0 20px;
+      }
+    }
+
+    button {
+      height: 45px;
+      width: 100%;
+    }
+  }
+}
