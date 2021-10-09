@@ -83,8 +83,34 @@ button.neu-button {
   width: 100vw;
   height: 100vh;
   display: flex;
-  align-items: center;
-  justify-content: center;
+
+  .left-menu {
+    flex: 0 280px;
+    overflow: hidden;
+
+    ul {
+      padding: 0;
+      margin: 0;
+
+      li {
+        list-style: none;
+        cursor: pointer;
+        box-shadow: inset 8px 8px 8px #cbced1, inset -8px -8px 8px #ffffff;
+
+        .menu-item {
+          height: 100px;
+          width: 100%;
+        }
+      }
+    }
+  }
+
+  .content {
+    flex: 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
   .row {
     margin-bottom: 20px;

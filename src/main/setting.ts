@@ -18,14 +18,16 @@ import ReactBrowserWindow from '../libs/ReactBrowserWindow';
 
 let settingWindow: BrowserWindow | null = null;
 
-ipcMain.on('saveConfig', (_: IpcMainEvent, args: Config) => {
+ipcMain.on('updateConfig', (_: IpcMainEvent, args: Config) => {
   try {
-    DB().table('schedule').insert(args);
+    DB().table('schedule').update(args);
     dialog.showMessageBox(settingWindow as BrowserWindow, {
-      message: '保存成功',
+      message: '更新成功',
     });
+    const records = DB().table('schedule').findAll();
+    settingWindow?.webContents.send('updateSchedules', records);
   } catch {
-    dialog.showErrorBox('保存结果', '失败');
+    dialog.showErrorBox('结果', '更新失败');
   }
 });
 
@@ -41,6 +43,8 @@ const createSettingWindow = async () => {
     return;
   }
   const reactBrowserWindow = ReactBrowserWindow.CreateWindow({
+    width: 2560,
+    height: 1600,
     pathname: '#/setting',
   });
 

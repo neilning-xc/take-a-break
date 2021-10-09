@@ -2,8 +2,8 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('electron', {
   ipcRenderer: {
-    saveConfig(data) {
-      ipcRenderer.send('saveConfig', data);
+    updateConfig(data) {
+      ipcRenderer.send('updateConfig', data);
     },
     skipBreak() {
       ipcRenderer.send('skipBreak');
@@ -16,7 +16,7 @@ contextBridge.exposeInMainWorld('electron', {
     },
 
     on(channel, func) {
-      const validChannels = ['countdown', 'status'];
+      const validChannels = ['countdown', 'status', 'updateSchedules'];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`
         ipcRenderer.on(channel, (event, ...args) => func(...args));

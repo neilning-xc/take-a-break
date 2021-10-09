@@ -1,81 +1,69 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/label-has-associated-control */
+import { Schedule } from 'global';
 import React, { useState, useEffect } from 'react';
 import '../style/App.global.scss';
+import SetForm from '../components/SetForm';
 
 const { ipcRenderer } = window.electron;
 
-const Setting = () => {
-  const [workTime, updateWorkTime] = useState<number>(0);
-  const [breakTime, updateBreakTime] = useState<number>(0);
-  const [delayTime, updateDelayTime] = useState<number>(0);
+interface ItemProp {
+  data: Schedule;
+}
 
-  const handleSaveClick = () => {
-    ipcRenderer.saveConfig({ workTime, breakTime, delayTime });
+const Item: React.FunctionComponent<ItemProp> = ({ data }) => {
+  return <div className="menu-item">{JSON.stringify(data)}</div>;
+};
+
+const Setting: React.FunctionComponent = () => {
+  const [schedules, updateSchedules] = useState<Schedule[]>([]);
+  const [currentRow, updateCurrent] = useState<Schedule>({
+    workTime: 0,
+    breakTime: 0,
+    delayTime: 0,
+  });
+
+  const handleMenuClick = (schedule: Schedule) => {
+    updateCurrent(schedule);
   };
 
   useEffect(() => {
-    const schedules = ipcRenderer.getSchedules();
-    const schedule = schedules[0];
-    updateWorkTime(schedule.workTime);
-    updateBreakTime(schedule.breakTime);
-    updateDelayTime(schedule.delayTime);
+    const data = ipcRenderer.getSchedules();
+    updateSchedules(data);
+    // const schedule = data[0];
+    // updateWorkTime(schedule.workTime);
+    // updateBreakTime(schedule.breakTime);
+    // updateDelayTime(schedule.delayTime);
+  }, []);
+
+  useEffect(() => {
+    ipcRenderer.on('updateSchedules', (args: Schedule[]) => {
+      updateSchedules(args);
+    });
+
+    return () => {
+      ipcRenderer.removeAllListeners('updateSchedules');
+    };
   }, []);
 
   return (
     <div className="setting">
-      <form className="form">
-        <div className="row">
-          <label>工作时间</label>
-          <div className="field">
-            <input
-              name="work-time"
-              value={workTime}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                updateWorkTime(Number(event.target.value))
-              }
-              type="text"
-              placeholder="工作时间"
-            />
-          </div>
-        </div>
-        <div className="row">
-          <label>休息时间</label>
-          <div className="field">
-            <input
-              name="break-time"
-              value={breakTime}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                updateBreakTime(Number(event.target.value))
-              }
-              type="text"
-              placeholder="休息时间"
-            />
-          </div>
-        </div>
-        <div className="row">
-          <label>推迟时间</label>
-          <div className="field">
-            <input
-              name="delay-time"
-              value={delayTime}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                updateDelayTime(Number(event.target.value))
-              }
-              type="text"
-              placeholder="推迟时间"
-            />
-          </div>
-        </div>
-        <div className="row">
-          <button
-            className="neu-button"
-            type="button"
-            onClick={handleSaveClick}
-          >
-            保存
-          </button>
-        </div>
-      </form>
+      <div className="left-menu">
+        <ul>
+          {schedules.map((schedule: Schedule) => {
+            return (
+              <li key={schedule.id} onClick={() => handleMenuClick(schedule)}>
+                <Item data={schedule} />
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+      <div className="content">
+        <SetForm data={currentRow} />
+      </div>
     </div>
   );
 };

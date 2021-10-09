@@ -1,22 +1,35 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ElectronStore from 'electron-store';
 import Database from './Database';
 
 const Store = require('electron-store');
 
+/**
+ * electron-store的数据库实现类
+ */
 export default class StoreAdaptor implements Database {
+  /**
+   * 第三方数据库实例
+   */
   private db: ElectronStore | null = null;
 
+  /**
+   * 某表格的自增值
+   */
   private increment = 0;
 
   private records: Record<string, any>[] = [];
 
+  /**
+   * 正在操作的数据库表
+   */
   private tableName = '';
 
   constructor() {
     this.db = this.instanceDB();
   }
 
-  update(record: Record<string, any>): Record<string, any> {
+  public update(record: Record<string, any>): Record<string, any> {
     const { id } = record;
     const index = this.records.findIndex(
       (item: Record<string, any>) => item.id === id
@@ -26,11 +39,11 @@ export default class StoreAdaptor implements Database {
     return record;
   }
 
-  findById(id: number): Record<string, any> | undefined {
+  public findById(id: number): Record<string, any> | undefined {
     return this.records.find((item: Record<string, any>) => item.id === id);
   }
 
-  findAll(): Record<string, any>[] {
+  public findAll(): Record<string, any>[] {
     return this.records;
   }
 
@@ -55,14 +68,14 @@ export default class StoreAdaptor implements Database {
     return this;
   }
 
-  insert(record: Record<string, any>): number {
+  public insert(record: Record<string, any>): number {
     // eslint-disable-next-line no-plusplus
     this.records.push({ id: ++this.increment, ...record });
     this.db?.set(this.tableName, this.records);
     return this.increment;
   }
 
-  delete(id: number): boolean {
+  public delete(id: number): boolean {
     const index = this.records.findIndex(
       (item: Record<string, any>) => item.id === id
     );

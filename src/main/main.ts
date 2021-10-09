@@ -197,7 +197,7 @@ app
     createTray();
   })
   .then(() => {
-    app.dock.hide();
+    // app.dock.hide();
   })
   .catch(console.log);
 
