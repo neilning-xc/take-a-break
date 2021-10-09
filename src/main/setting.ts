@@ -12,17 +12,32 @@
  */
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
-import { BrowserWindow, Config, ipcMain, IpcMainEvent } from 'electron';
+import { BrowserWindow, Config, ipcMain, IpcMainEvent, dialog } from 'electron';
+import DB from '../libs/DB';
 import ReactBrowserWindow from '../libs/ReactBrowserWindow';
 
 let settingWindow: BrowserWindow | null = null;
 
-ipcMain.on('save-config', (_: IpcMainEvent, args: Config) => {
-  console.log(args);
+ipcMain.on('saveConfig', (_: IpcMainEvent, args: Config) => {
+  try {
+    DB().table('schedule').insert(args);
+    dialog.showMessageBox(settingWindow as BrowserWindow, {
+      message: '保存成功',
+    });
+  } catch {
+    dialog.showErrorBox('保存结果', '失败');
+  }
+});
+
+ipcMain.on('getSchedules', (event: IpcMainEvent) => {
+  const schedules = DB().table('schedule').findAll();
+  event.returnValue = schedules;
 });
 
 const createSettingWindow = async () => {
   if (settingWindow !== null) {
+    settingWindow?.show();
+    settingWindow?.focus();
     return;
   }
   const reactBrowserWindow = ReactBrowserWindow.CreateWindow({

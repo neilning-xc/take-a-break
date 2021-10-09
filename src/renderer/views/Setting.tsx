@@ -1,18 +1,25 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../style/App.global.scss';
-import config from '../../config.json';
 
 const { ipcRenderer } = window.electron;
 
 const Setting = () => {
-  const [workTime, updateWorkTime] = useState<number>(config.workTime);
-  const [breakTime, updateBreakTime] = useState<number>(config.breakTime);
-  const [delayTime, updateDelayTime] = useState<number>(config.delayTime);
+  const [workTime, updateWorkTime] = useState<number>(0);
+  const [breakTime, updateBreakTime] = useState<number>(0);
+  const [delayTime, updateDelayTime] = useState<number>(0);
 
   const handleSaveClick = () => {
     ipcRenderer.saveConfig({ workTime, breakTime, delayTime });
   };
+
+  useEffect(() => {
+    const schedules = ipcRenderer.getSchedules();
+    const schedule = schedules[0];
+    updateWorkTime(schedule.workTime);
+    updateBreakTime(schedule.breakTime);
+    updateDelayTime(schedule.delayTime);
+  }, []);
 
   return (
     <div className="setting">

@@ -19,12 +19,15 @@ import { STATUS } from '../constants';
 import createSettingWindow from './setting';
 import AppUpdater from '../libs/AppUpdater';
 import ReactBrowserWindow from '../libs/ReactBrowserWindow';
+import DB from '../libs/DB';
 
 type Timer = NodeJS.Timeout | null;
 
 const isDevelopment =
   process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
-const { workTime, breakTime } = config;
+
+const configs = DB().table('schedule').findAll();
+const { workTime, breakTime } = configs[0];
 
 let tray: Tray | null = null;
 let mainWindow: BrowserWindow | null = null;
@@ -82,6 +85,10 @@ const postponeBreak = () => {
 
 const handleSettingClick = () => {
   createSettingWindow();
+};
+
+const handleQuitClick = () => {
+  app.quit();
 };
 
 const setupTimeout = () => {
@@ -164,6 +171,7 @@ const createTray = () => {
     tray.setToolTip('Take a break');
     const contextMenu = Menu.buildFromTemplate([
       { label: '设置', type: 'normal', click: handleSettingClick },
+      { label: '退出', type: 'normal', click: handleQuitClick },
     ]);
     tray.setContextMenu(contextMenu);
   }

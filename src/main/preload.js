@@ -3,13 +3,16 @@ const { contextBridge, ipcRenderer } = require('electron');
 contextBridge.exposeInMainWorld('electron', {
   ipcRenderer: {
     saveConfig(data) {
-      ipcRenderer.send('save-config', data);
+      ipcRenderer.send('saveConfig', data);
     },
     skipBreak() {
       ipcRenderer.send('skipBreak');
     },
     postponeBreak() {
       ipcRenderer.send('postponeBreak');
+    },
+    getSchedules() {
+      return ipcRenderer.sendSync('getSchedules');
     },
 
     on(channel, func) {
