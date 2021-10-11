@@ -23,6 +23,8 @@ body {
   justify-content: center;
   align-items: center;
   color: $color;
+  padding: 0;
+  margin: 0;
 }
 
 .container {
@@ -85,8 +87,13 @@ button.neu-button {
   display: flex;
 
   .left-menu {
-    flex: 0 280px;
+    flex: 0 320px;
     overflow: hidden;
+    border-right: 1px solid #a9a9a9;
+
+    h3 {
+      margin: 10px;
+    }
 
     ul {
       padding: 0;
@@ -95,12 +102,40 @@ button.neu-button {
       li {
         list-style: none;
         cursor: pointer;
-        box-shadow: inset 8px 8px 8px #cbced1, inset -8px -8px 8px #ffffff;
+        padding: 0 10px;
 
-        .menu-item {
-          height: 100px;
-          width: 100%;
+        &:hover {
+          background-color: #c7c7c7;
         }
+      }
+    }
+
+    .menu-item {
+      height: 100px;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .schedule-info {
+      flex: 0 0 200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+      h4 {
+        margin: 0;
+      }
+    }
+
+    .action {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+      button {
+        margin: 2px 0;
+        width: 60px;
       }
     }
   }

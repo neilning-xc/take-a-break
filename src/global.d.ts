@@ -1,7 +1,8 @@
-import { BrowserWindowConstructorOptions } from 'electron/main';
+/// <reference types="electron"/>
 
-declare interface Schedule {
+interface Schedule {
   id?: number;
+  name?: string;
   breakTime: number;
   workTime: number;
   delayTime: number;
@@ -9,8 +10,8 @@ declare interface Schedule {
   enable?: boolean;
 }
 
-declare interface ReactBrowserWindowOption
-  extends BrowserWindowConstructorOptions {
+interface ReactBrowserWindowOption
+  extends Electron.BrowserWindowConstructorOptions {
   pathname?: string;
   template?: string;
 }

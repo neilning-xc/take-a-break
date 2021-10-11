@@ -5,17 +5,11 @@
 import { Schedule } from 'global';
 import React, { useState, useEffect } from 'react';
 import '../style/App.global.scss';
+import classNames from 'classnames';
 import SetForm from '../components/SetForm';
+import MenuItem from '../components/MenuItem';
 
 const { ipcRenderer } = window.electron;
-
-interface ItemProp {
-  data: Schedule;
-}
-
-const Item: React.FunctionComponent<ItemProp> = ({ data }) => {
-  return <div className="menu-item">{JSON.stringify(data)}</div>;
-};
 
 const Setting: React.FunctionComponent = () => {
   const [schedules, updateSchedules] = useState<Schedule[]>([]);
@@ -32,10 +26,6 @@ const Setting: React.FunctionComponent = () => {
   useEffect(() => {
     const data = ipcRenderer.getSchedules();
     updateSchedules(data);
-    // const schedule = data[0];
-    // updateWorkTime(schedule.workTime);
-    // updateBreakTime(schedule.breakTime);
-    // updateDelayTime(schedule.delayTime);
   }, []);
 
   useEffect(() => {
@@ -51,11 +41,18 @@ const Setting: React.FunctionComponent = () => {
   return (
     <div className="setting">
       <div className="left-menu">
+        <h3 className="label">预约计划</h3>
         <ul>
           {schedules.map((schedule: Schedule) => {
             return (
-              <li key={schedule.id} onClick={() => handleMenuClick(schedule)}>
-                <Item data={schedule} />
+              <li
+                className={classNames({
+                  avtive: schedule.id === currentRow.id,
+                })}
+                key={schedule.id}
+                onClick={() => handleMenuClick(schedule)}
+              >
+                <MenuItem data={schedule} />
               </li>
             );
           })}

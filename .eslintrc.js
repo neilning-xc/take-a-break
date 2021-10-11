@@ -3,6 +3,8 @@ module.exports = {
   rules: {
     // A temporary hack related to IDE not resolving correct package.json
     'import/no-extraneous-dependencies': 'off',
+    'jsx-a11y/label-has-associated-control': 'off',
+    'react/button-has-type': 'off',
   },
   parserOptions: {
     ecmaVersion: 2020,
