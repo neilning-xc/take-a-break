@@ -15,3 +15,7 @@ interface ReactBrowserWindowOption
   pathname?: string;
   template?: string;
 }
+
+interface Window {
+  electron?: any;
+}

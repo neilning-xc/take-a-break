@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import { Schedule } from 'global';
 import React, { useState, useEffect } from 'react';
 import '../style/App.global.scss';
 

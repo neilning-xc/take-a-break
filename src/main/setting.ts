@@ -12,13 +12,13 @@
  */
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
-import { BrowserWindow, Config, ipcMain, IpcMainEvent, dialog } from 'electron';
+import { BrowserWindow, ipcMain, IpcMainEvent, dialog } from 'electron';
 import DB from '../libs/DB';
 import ReactBrowserWindow from '../libs/ReactBrowserWindow';
 
 let settingWindow: BrowserWindow | null = null;
 
-ipcMain.on('updateConfig', (_: IpcMainEvent, args: Config) => {
+ipcMain.on('updateConfig', (_: IpcMainEvent, args: Schedule) => {
   try {
     DB().table('schedule').update(args);
     dialog.showMessageBox(settingWindow as BrowserWindow, {
@@ -28,6 +28,19 @@ ipcMain.on('updateConfig', (_: IpcMainEvent, args: Config) => {
     settingWindow?.webContents.send('updateSchedules', records);
   } catch {
     dialog.showErrorBox('结果', '更新失败');
+  }
+});
+
+ipcMain.on('removeConfig', (_: IpcMainEvent, id: number) => {
+  try {
+    DB().table('schedule').delete(id);
+    dialog.showMessageBox(settingWindow as BrowserWindow, {
+      message: '删除成功',
+    });
+    const records = DB().table('schedule').findAll();
+    settingWindow?.webContents.send('updateSchedules', records);
+  } catch {
+    dialog.showErrorBox('结果', '删除失败');
   }
 });
 

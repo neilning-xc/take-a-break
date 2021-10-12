@@ -1,11 +1,16 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 
+const { ipcRenderer } = window.electron;
 interface ItemProp {
   data: Schedule;
 }
 
 const MenuItem: React.FunctionComponent<ItemProp> = ({ data }) => {
+  const handleRemoveClick = () => {
+    ipcRenderer.removeConfig(data.id);
+  };
+
   return (
     <div className="menu-item">
       <div className="schedule-info">
@@ -22,7 +27,7 @@ const MenuItem: React.FunctionComponent<ItemProp> = ({ data }) => {
       <div className="action">
         <button>开始</button>
         <button>暂停</button>
-        <button>删除</button>
+        <button onClick={handleRemoveClick}>删除</button>
       </div>
     </div>
   );

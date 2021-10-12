@@ -1,6 +1,5 @@
 import { BrowserWindow, shell } from 'electron';
 import { BrowserWindowConstructorOptions } from 'electron/main';
-import { ReactBrowserWindowOption } from 'global';
 import path from 'path';
 import { EventEmitter } from 'stream';
 import MenuBuilder from '../main/menu';
