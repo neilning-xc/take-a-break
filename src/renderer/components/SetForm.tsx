@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import '../style/App.global.scss';
 
-const { ipcRenderer } = window.electron;
+const { ipcRenderer } = electron;
 
 interface SetFormProp {
   data: Schedule;

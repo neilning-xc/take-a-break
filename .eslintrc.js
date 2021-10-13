@@ -5,6 +5,7 @@ module.exports = {
     'import/no-extraneous-dependencies': 'off',
     'jsx-a11y/label-has-associated-control': 'off',
     'react/button-has-type': 'off',
+    'spaced-comment': 'off',
   },
   parserOptions: {
     ecmaVersion: 2020,

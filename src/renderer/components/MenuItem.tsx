@@ -1,14 +1,23 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 
-const { ipcRenderer } = window.electron;
+const { ipcRenderer } = electron;
 interface ItemProp {
   data: Schedule;
+  currentId: number;
 }
 
-const MenuItem: React.FunctionComponent<ItemProp> = ({ data }) => {
+const MenuItem: React.FunctionComponent<ItemProp> = ({ data, currentId }) => {
   const handleRemoveClick = () => {
     ipcRenderer.removeConfig(data.id);
+  };
+
+  const handleDisableClick = () => {
+    ipcRenderer.disableSchedule();
+  };
+
+  const handleStartClick = () => {
+    ipcRenderer.startSchedule(data.id);
   };
 
   return (
@@ -25,8 +34,11 @@ const MenuItem: React.FunctionComponent<ItemProp> = ({ data }) => {
         </div>
       </div>
       <div className="action">
-        <button>开始</button>
-        <button>暂停</button>
+        {currentId === data.id ? (
+          <button onClick={handleDisableClick}>禁用</button>
+        ) : (
+          <button onClick={handleStartClick}>开始</button>
+        )}
         <button onClick={handleRemoveClick}>删除</button>
       </div>
     </div>

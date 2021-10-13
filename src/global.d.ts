@@ -1,7 +1,7 @@
 /// <reference types="electron"/>
 
 interface Schedule {
-  id?: number;
+  id: number;
   name?: string;
   breakTime: number;
   workTime: number;
@@ -19,3 +19,5 @@ interface ReactBrowserWindowOption
 interface Window {
   electron?: any;
 }
+
+declare const electron: any;

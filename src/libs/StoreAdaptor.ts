@@ -1,13 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ElectronStore from 'electron-store';
-import Database from './Database';
+import Table, { IncrementTable } from './Table';
 
 const Store = require('electron-store');
 
 /**
  * electron-store的数据库实现类
  */
-export default class StoreAdaptor implements Database {
+export default class StoreAdaptor<T extends IncrementTable>
+  implements Table<T>
+{
   /**
    * 第三方数据库实例
    */
@@ -18,32 +20,32 @@ export default class StoreAdaptor implements Database {
    */
   private increment = 0;
 
-  private records: Record<string, any>[] = [];
+  private records: T[] = [];
 
   /**
    * 正在操作的数据库表
    */
   private tableName = '';
 
-  constructor() {
+  constructor(tableName: string) {
+    // TODO: db应该是单例模式，存储在全局对象中
     this.db = this.instanceDB();
+    this.table(tableName);
   }
 
-  public update(record: Record<string, any>): Record<string, any> {
+  public update(record: T): T {
     const { id } = record;
-    const index = this.records.findIndex(
-      (item: Record<string, any>) => item.id === id
-    );
+    const index = this.records.findIndex((item: T) => item.id === id);
     this.records[index] = record;
     this.db?.set(this.tableName, this.records);
     return record;
   }
 
-  public findById(id: number): Record<string, any> | undefined {
-    return this.records.find((item: Record<string, any>) => item.id === id);
+  public findById(id: number): T | undefined {
+    return this.records.find((item: T) => item.id === id);
   }
 
-  public findAll(): Record<string, any>[] {
+  public findAll(): T[] {
     return this.records;
   }
 
@@ -62,28 +64,33 @@ export default class StoreAdaptor implements Database {
       this.db.set(tableName, []);
     }
     this.tableName = tableName;
-    this.records = this.db.get(tableName) as Record<string, any>[];
+    this.records = this.db.get(tableName) as T[];
 
     this.increment = this.records.length;
-    return this;
   }
 
-  public insert(record: Record<string, any>): number {
+  public insert(record: T): number {
     // eslint-disable-next-line no-plusplus
-    this.records.push({ id: ++this.increment, ...record });
+    this.records.push({ ...record, id: ++this.increment });
     this.db?.set(this.tableName, this.records);
     return this.increment;
   }
 
   public delete(id: number): boolean {
-    const index = this.records.findIndex(
-      (item: Record<string, any>) => item.id === id
-    );
+    const index = this.records.findIndex((item: T) => item.id === id);
     if (index !== -1) {
       this.records.splice(index, 1);
       this.db?.set(this.tableName, this.records);
       return true;
     }
     return false;
+  }
+
+  public count(): number {
+    return this.records.length;
+  }
+
+  public first(): T {
+    return this.records[0];
   }
 }

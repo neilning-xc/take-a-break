@@ -1,9 +1,8 @@
-enum STATUS {
+export enum STATUS {
   closed,
   working,
   breaking,
   delaying,
 }
 
-// eslint-disable-next-line import/prefer-default-export
-export { STATUS };
+export const CURRENT_ID = 'currentId';

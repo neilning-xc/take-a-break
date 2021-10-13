@@ -8,11 +8,13 @@ import classNames from 'classnames';
 import SetForm from '../components/SetForm';
 import MenuItem from '../components/MenuItem';
 
-const { ipcRenderer } = window.electron;
+const { ipcRenderer } = electron;
 
 const Setting: React.FunctionComponent = () => {
+  const [currentId, updateCurrentId] = useState<number>(0);
   const [schedules, updateSchedules] = useState<Schedule[]>([]);
   const [currentRow, updateCurrent] = useState<Schedule>({
+    id: 0,
     workTime: 0,
     breakTime: 0,
     delayTime: 0,
@@ -28,12 +30,33 @@ const Setting: React.FunctionComponent = () => {
   }, []);
 
   useEffect(() => {
+    const id = ipcRenderer.getCurrentId();
+    updateCurrentId(id);
+  }, []);
+
+  /**
+   * 订阅所有schedules更新
+   */
+  useEffect(() => {
     ipcRenderer.on('updateSchedules', (args: Schedule[]) => {
       updateSchedules(args);
     });
 
     return () => {
       ipcRenderer.removeAllListeners('updateSchedules');
+    };
+  }, []);
+
+  /**
+   * 订阅当前正在运行的schedule的id更新事件
+   */
+  useEffect(() => {
+    ipcRenderer.on('updateCurrentId', (id: number) => {
+      updateCurrentId(id);
+    });
+
+    return () => {
+      ipcRenderer.removeAllListeners('updateCurrentId');
     };
   }, []);
 
@@ -51,7 +74,7 @@ const Setting: React.FunctionComponent = () => {
                 key={schedule.id}
                 onClick={() => handleMenuClick(schedule)}
               >
-                <MenuItem data={schedule} />
+                <MenuItem data={schedule} currentId={currentId} />
               </li>
             );
           })}

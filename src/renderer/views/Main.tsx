@@ -3,7 +3,7 @@ import { STATUS } from '../../constants';
 import '../style/App.global.scss';
 import { formatTime } from './util';
 
-const { ipcRenderer } = window.electron;
+const { ipcRenderer } = electron;
 
 const Main = () => {
   const [countdown, updateCountdown] = useState(0);

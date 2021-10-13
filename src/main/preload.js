@@ -14,12 +14,25 @@ contextBridge.exposeInMainWorld('electron', {
     postponeBreak() {
       ipcRenderer.send('postponeBreak');
     },
+    disableSchedule() {
+      ipcRenderer.send('disableSchedule');
+    },
+    startSchedule(id) {
+      ipcRenderer.send('startSchedule', id);
+    },
     getSchedules() {
       return ipcRenderer.sendSync('getSchedules');
     },
-
+    getCurrentId() {
+      return ipcRenderer.sendSync('getCurrentId');
+    },
     on(channel, func) {
-      const validChannels = ['countdown', 'status', 'updateSchedules'];
+      const validChannels = [
+        'countdown',
+        'status',
+        'updateSchedules',
+        'updateCurrentId',
+      ];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`
         ipcRenderer.on(channel, (event, ...args) => func(...args));

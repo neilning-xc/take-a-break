@@ -12,25 +12,26 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import { app, BrowserWindow, Menu, Tray, ipcMain } from 'electron';
+import { IpcMainEvent } from 'electron/main';
+import Store from 'electron-store';
 import { getAssetPath } from './util';
-import config from '../config.json';
 import { formatTime } from '../renderer/views/util';
-import { STATUS } from '../constants';
+import { CURRENT_ID, STATUS } from '../constants';
 import createSettingWindow from './setting';
 import AppUpdater from '../libs/AppUpdater';
 import ReactBrowserWindow from '../libs/ReactBrowserWindow';
 import DB from '../libs/DB';
+
+const store = new Store();
 
 type Timer = NodeJS.Timeout | null;
 
 const isDevelopment =
   process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
-const configs = DB().table('schedule').findAll();
-const { workTime, breakTime } = configs[0];
-
 let tray: Tray | null = null;
 let mainWindow: BrowserWindow | null = null;
+let settingWindow: BrowserWindow | null = null;
 let globalTimer: Timer = null;
 let globalStatus = STATUS.closed;
 let startTime = 0;
@@ -67,6 +68,7 @@ const showOverlay = () => {
 };
 
 const skipBreak = () => {
+  // 当前状态处于休息状态时，跳过休息状态，直接进入工作状态
   if (globalStatus === STATUS.breaking) {
     globalStatus = STATUS.working;
     startTime = getTimestamp();
@@ -76,6 +78,7 @@ const skipBreak = () => {
 };
 
 const postponeBreak = () => {
+  // 当前状态处于休息状态时，设置成为推迟状态
   if (globalStatus === STATUS.breaking) {
     globalStatus = STATUS.delaying;
     startTime = getTimestamp();
@@ -83,15 +86,33 @@ const postponeBreak = () => {
   }
 };
 
-const handleSettingClick = () => {
-  createSettingWindow();
+/**
+ * 禁用当前schedule,同时通知render线程更新当前正在运行的id
+ */
+const disableSchedule = () => {
+  if (globalTimer) {
+    clearInterval(globalTimer);
+    globalTimer = null;
+    store.delete(CURRENT_ID);
+    settingWindow?.webContents.send('updateCurrentId', 0);
+    mainWindow?.webContents.send('updateCurrentId', 0);
+  }
+};
+
+const handleSettingClick = async () => {
+  settingWindow = await createSettingWindow();
 };
 
 const handleQuitClick = () => {
   app.quit();
 };
 
-const setupTimeout = () => {
+const setupTimeout = (params: {
+  workTime: number;
+  breakTime: number;
+  delayTime: number;
+}) => {
+  const { workTime, breakTime, delayTime } = params;
   if (globalTimer === null) {
     startTime = getTimestamp();
     globalStatus = STATUS.working;
@@ -124,8 +145,8 @@ const setupTimeout = () => {
       }
 
       if (globalStatus === STATUS.delaying) {
-        timeLeft = config.delayTime - (currentTime - startTime);
-        if (currentTime - startTime >= config.delayTime) {
+        timeLeft = delayTime - (currentTime - startTime);
+        if (currentTime - startTime >= delayTime) {
           // 工作时间结束，开始休息
           startTime = currentTime;
           globalStatus = STATUS.breaking;
@@ -140,6 +161,19 @@ const setupTimeout = () => {
       mainWindow?.webContents.send('countdown', timeLeft);
     }, 1000);
   }
+};
+
+const setupTimeoutById = (id: number) => {
+  const schedule = DB('schedule').findById(id);
+  if (!schedule) {
+    throw new Error('schedule does not exist');
+  }
+  store.set(CURRENT_ID, id);
+  // 通知render线程更新currentId
+  settingWindow?.webContents.send('updateCurrentId', id);
+  mainWindow?.webContents.send('updateCurrentId', id);
+  const { workTime, breakTime, delayTime } = schedule;
+  setupTimeout({ workTime, breakTime, delayTime });
 };
 
 const createWindow = async () => {
@@ -161,7 +195,16 @@ const createWindow = async () => {
 
 const init = async () => {
   await createWindow();
-  setupTimeout();
+
+  const count = DB('schedule').count();
+  if (count > 0) {
+    if (store.has(CURRENT_ID)) {
+      setupTimeoutById(<number>store.get(CURRENT_ID));
+    } else {
+      const firstSchedule = DB('schedule').first();
+      setupTimeoutById(firstSchedule.id);
+    }
+  }
 };
 
 // Create system tray
@@ -207,10 +250,26 @@ app.on('activate', () => {
   if (mainWindow === null) createWindow();
 });
 
+/////////////////////////////////////////
+//         异步的主线程监听事件           //
+////////////////////////////////////////
 ipcMain.on('skipBreak', () => {
   skipBreak();
 });
 
 ipcMain.on('postponeBreak', () => {
   postponeBreak();
+});
+
+ipcMain.on('disableSchedule', () => {
+  disableSchedule();
+});
+
+ipcMain.on('startSchedule', (_: IpcMainEvent, id: number) => {
+  if (!store.has(CURRENT_ID)) {
+    setupTimeoutById(id);
+  } else if (store.get(CURRENT_ID) !== id) {
+    disableSchedule();
+    setupTimeoutById(id);
+  }
 });
