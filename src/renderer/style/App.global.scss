@@ -91,8 +91,19 @@ button.neu-button {
     overflow: hidden;
     border-right: 1px solid #a9a9a9;
 
+    .title {
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      button {
+        flex: 0 0 auto;
+      }
+    }
+
     h3 {
-      margin: 10px;
+      margin: 10px 0;
     }
 
     ul {
