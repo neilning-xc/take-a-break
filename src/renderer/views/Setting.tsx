@@ -5,22 +5,26 @@ import React, { useState, useEffect } from 'react';
 import { Link, Switch, Route } from 'react-router-dom';
 import '../style/App.global.scss';
 import classNames from 'classnames';
-import SetForm from '../components/SetForm';
+import ScheduleForm from '../components/ScheduleForm';
 import MenuItem from '../components/MenuItem';
 
 const { ipcRenderer } = electron;
 
-const emptyRow: Schedule = {
-  id: 0,
-  workTime: 0,
-  breakTime: 0,
-  delayTime: 0,
+const getEmpty: (count?: number) => Schedule = (count?: number) => {
+  return {
+    id: 0,
+    name: `休息计划${count || 0}`,
+    message: '',
+    workTime: 0,
+    breakTime: 0,
+    delayTime: 0,
+  };
 };
 
 const Setting: React.FunctionComponent = () => {
   const [currentId, updateCurrentId] = useState<number>(0);
   const [schedules, updateSchedules] = useState<Schedule[]>([]);
-  const [currentRow, updateCurrent] = useState<Schedule>(emptyRow);
+  const [currentRow, updateCurrent] = useState<Schedule>(getEmpty());
 
   const handleMenuClick = (schedule: Schedule) => {
     updateCurrent(schedule);
@@ -93,10 +97,10 @@ const Setting: React.FunctionComponent = () => {
       <div className="content">
         <Switch>
           <Route path="/setting/add-setting">
-            <SetForm data={emptyRow} />
+            <ScheduleForm data={getEmpty(schedules.length + 1)} />
           </Route>
           <Route path="/setting/:id">
-            <SetForm data={currentRow} />
+            <ScheduleForm data={currentRow} />
           </Route>
         </Switch>
       </div>

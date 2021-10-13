@@ -77,6 +77,19 @@ ipcMain.on('removeConfig', (_: IpcMainEvent, id: number) => {
   }
 });
 
+ipcMain.on('addConfig', (_: IpcMainEvent, schedule: Schedule) => {
+  try {
+    DB('schedule').insert(schedule);
+    dialog.showMessageBox(settingWindow as BrowserWindow, {
+      message: '添加成功',
+    });
+    const records = DB('schedule').findAll();
+    settingWindow?.webContents.send('updateSchedules', records);
+  } catch {
+    dialog.showErrorBox('结果', '添加失败');
+  }
+});
+
 /////////////////////////////////////////
 //         同步的主线程监听事件           //
 ////////////////////////////////////////

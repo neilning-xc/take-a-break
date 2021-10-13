@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import StoreAdaptor from './StoreAdaptor';
+import Table, { IncrementTable } from './Table';
 
 const instanceMap: Record<string, any> = {};
 
@@ -8,7 +9,7 @@ const instanceMap: Record<string, any> = {};
  * @param table 表名
  * @returns
  */
-const DB = (table: string) => {
+const DB: (table: string) => Table<IncrementTable> = (table: string) => {
   if (instanceMap[table]) {
     return instanceMap[table];
   }

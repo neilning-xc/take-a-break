@@ -5,6 +5,9 @@ contextBridge.exposeInMainWorld('electron', {
     updateConfig(data) {
       ipcRenderer.send('updateConfig', data);
     },
+    addConfig(data) {
+      ipcRenderer.send('addConfig', data);
+    },
     removeConfig(id) {
       ipcRenderer.send('removeConfig', id);
     },
