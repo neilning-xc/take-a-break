@@ -240,7 +240,10 @@ app
     createTray();
   })
   .then(() => {
-    // app.dock.hide();
+    // 开发环境时，为了便于调试，不隐藏dock图标
+    if (process.env.NODE_ENV === 'production') {
+      app.dock.hide();
+    }
   })
   .catch(console.log);
 

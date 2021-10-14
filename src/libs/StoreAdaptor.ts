@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ElectronStore from 'electron-store';
-import Table, { IncrementTable } from './Table';
+import Table, { IncrementTable, RawTableStruct } from './Table';
 
 const Store = require('electron-store');
 
@@ -29,15 +29,31 @@ export default class StoreAdaptor<T extends IncrementTable>
 
   constructor(tableName: string) {
     // TODO: db应该是单例模式，存储在全局对象中
-    this.db = this.instanceDB();
+    this.db = StoreAdaptor.instanceDB();
     this.table(tableName);
+  }
+
+  /**
+   * 写入底层的数据表信息，所有对数据表有写操作的方法都要调用该方法
+   */
+  private writeTable() {
+    this.db?.set(this.tableName, {
+      data: this.records,
+      autoIncrement: this.increment,
+    });
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  private static instanceDB() {
+    const store = new Store();
+    return store;
   }
 
   public update(record: T): T {
     const { id } = record;
     const index = this.records.findIndex((item: T) => item.id === id);
     this.records[index] = record;
-    this.db?.set(this.tableName, this.records);
+    this.writeTable();
     return record;
   }
 
@@ -49,30 +65,27 @@ export default class StoreAdaptor<T extends IncrementTable>
     return this.records;
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  private instanceDB() {
-    const store = new Store();
-    return store;
-  }
-
   public table(tableName: string) {
     if (!this.db) {
       throw new Error('db does not exist');
     }
 
     if (!this.db.has(tableName)) {
-      this.db.set(tableName, []);
+      this.db.set(tableName, {
+        data: [],
+        autoIncrement: 0,
+      });
     }
     this.tableName = tableName;
-    this.records = this.db.get(tableName) as T[];
-
-    this.increment = this.records.length;
+    const rawTableData = <RawTableStruct>this.db.get(tableName);
+    this.records = rawTableData.data;
+    this.increment = rawTableData.autoIncrement;
   }
 
   public insert(record: T): number {
     // eslint-disable-next-line no-plusplus
     this.records.push({ ...record, id: ++this.increment });
-    this.db?.set(this.tableName, this.records);
+    this.writeTable();
     return this.increment;
   }
 
@@ -80,7 +93,7 @@ export default class StoreAdaptor<T extends IncrementTable>
     const index = this.records.findIndex((item: T) => item.id === id);
     if (index !== -1) {
       this.records.splice(index, 1);
-      this.db?.set(this.tableName, this.records);
+      this.writeTable();
       return true;
     }
     return false;

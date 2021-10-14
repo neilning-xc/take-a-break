@@ -10,6 +10,14 @@ export interface IncrementTable {
   id: number;
 }
 
+/**
+ * 数据库表的底层结构，data为存储的数据，autoIncrement为当前表的自增id
+ */
+export interface RawTableStruct {
+  data: any[];
+  autoIncrement: number;
+}
+
 export default interface Table<T extends IncrementTable> {
   /**
    * 获取数据库表, 该方法必须返回数据库实例以便实现链式调用
