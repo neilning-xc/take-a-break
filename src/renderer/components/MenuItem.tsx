@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { STATUS } from '../../constants';
 
 const { ipcRenderer } = electron;
 interface ItemProp {
@@ -8,6 +9,13 @@ interface ItemProp {
 }
 
 const MenuItem: React.FunctionComponent<ItemProp> = ({ data, currentId }) => {
+  const [globalStatus, setStatus] = useState<number>(STATUS.working);
+
+  useEffect(() => {
+    const status = ipcRenderer.getStatus();
+    setStatus(status);
+  }, []);
+
   const handleRemoveClick = () => {
     ipcRenderer.removeConfig(data.id);
   };
@@ -18,6 +26,18 @@ const MenuItem: React.FunctionComponent<ItemProp> = ({ data, currentId }) => {
 
   const handleStartClick = () => {
     ipcRenderer.startSchedule(data.id);
+  };
+
+  const handlePauseClick = () => {
+    ipcRenderer.pauseSchedule();
+    const status = ipcRenderer.getStatus();
+    setStatus(status);
+  };
+
+  const handleResumeClick = () => {
+    ipcRenderer.resumeSchedule();
+    const status = ipcRenderer.getStatus();
+    setStatus(status);
   };
 
   return (
@@ -40,6 +60,12 @@ const MenuItem: React.FunctionComponent<ItemProp> = ({ data, currentId }) => {
           <button onClick={handleStartClick}>开始</button>
         )}
         <button onClick={handleRemoveClick}>删除</button>
+        {globalStatus === STATUS.paused && (
+          <button onClick={handleResumeClick}>恢复</button>
+        )}
+        {globalStatus === STATUS.working && (
+          <button onClick={handlePauseClick}>暂停</button>
+        )}
       </div>
     </div>
   );

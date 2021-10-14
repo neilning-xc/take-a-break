@@ -11,11 +11,17 @@ contextBridge.exposeInMainWorld('electron', {
     removeConfig(id) {
       ipcRenderer.send('removeConfig', id);
     },
-    skipBreak() {
-      ipcRenderer.send('skipBreak');
+    pauseSchedule() {
+      ipcRenderer.send('pauseSchedule');
     },
-    postponeBreak() {
-      ipcRenderer.send('postponeBreak');
+    resumeSchedule() {
+      ipcRenderer.send('resumeSchedule');
+    },
+    skipSchedule() {
+      ipcRenderer.send('skipSchedule');
+    },
+    postponeSchedule() {
+      ipcRenderer.send('postponeSchedule');
     },
     disableSchedule() {
       ipcRenderer.send('disableSchedule');
@@ -28,6 +34,9 @@ contextBridge.exposeInMainWorld('electron', {
     },
     getCurrentId() {
       return ipcRenderer.sendSync('getCurrentId');
+    },
+    getStatus() {
+      return ipcRenderer.sendSync('getStatus');
     },
     on(channel, func) {
       const validChannels = [

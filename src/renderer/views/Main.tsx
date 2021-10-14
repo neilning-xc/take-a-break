@@ -38,10 +38,10 @@ const Main = () => {
   }, []);
 
   const handleSkipClick = () => {
-    ipcRenderer.skipBreak();
+    ipcRenderer.skipSchedule();
   };
   const handlePostponeClick = () => {
-    ipcRenderer.postponeBreak();
+    ipcRenderer.postponeSchedule();
   };
 
   return (
