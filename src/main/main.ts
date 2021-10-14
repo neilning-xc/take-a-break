@@ -34,7 +34,8 @@ let mainWindow: BrowserWindow | null = null;
 let settingWindow: BrowserWindow | null = null;
 let globalTimer: Timer = null;
 let globalStatus = STATUS.closed;
-let startTime = 0;
+let startTime = 0; // 记录点击开始按钮时的时间
+let pausedTime = 0; // 记录点击暂停按钮时的时间
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -67,8 +68,32 @@ const showOverlay = () => {
   mainWindow?.setAlwaysOnTop(true);
 };
 
-const skipBreak = () => {
-  // 当前状态处于休息状态时，跳过休息状态，直接进入工作状态
+/**
+ * 暂停当前计划，只能从工作状态暂停，进入暂停状态
+ */
+const pauseSchedule = () => {
+  if (globalStatus === STATUS.working) {
+    globalStatus = STATUS.paused;
+    pausedTime = getTimestamp();
+  }
+};
+
+/**
+ * 恢复当前计划，只能从暂停状态进入工作状态
+ */
+const resumeSchedule = () => {
+  if (globalStatus === STATUS.paused) {
+    globalStatus = STATUS.working;
+    const currentTime = getTimestamp();
+    // 设置新的开始时间，以便恢复工作状态时，能够重新得到暂停前的剩余时间
+    startTime += currentTime - pausedTime;
+  }
+};
+
+/**
+ * 强制跳过计划，只能从休息状态下跳过休息，进入工作状态
+ */
+const skipSchedule = () => {
   if (globalStatus === STATUS.breaking) {
     globalStatus = STATUS.working;
     startTime = getTimestamp();
@@ -77,8 +102,10 @@ const skipBreak = () => {
   }
 };
 
-const postponeBreak = () => {
-  // 当前状态处于休息状态时，设置成为推迟状态
+/**
+ * 强制推迟计划，只能从休息状态推迟，进入推迟状态
+ */
+const postponeSchedule = () => {
   if (globalStatus === STATUS.breaking) {
     globalStatus = STATUS.delaying;
     startTime = getTimestamp();
@@ -119,6 +146,8 @@ const setupTimeout = (params: {
     globalTimer = setInterval(() => {
       const currentTime = getTimestamp();
       let timeLeft = 0;
+
+      // 处理工作状态倒计时
       if (globalStatus === STATUS.working) {
         timeLeft = workTime - (currentTime - startTime);
         if (currentTime - startTime >= workTime) {
@@ -131,6 +160,8 @@ const setupTimeout = (params: {
           showOverlay();
         }
       }
+
+      // 处理休息状态的倒计时，休息结束时转换为工作状态
       if (globalStatus === STATUS.breaking) {
         timeLeft = breakTime - (currentTime - startTime);
         if (currentTime - startTime >= breakTime) {
@@ -144,6 +175,7 @@ const setupTimeout = (params: {
         }
       }
 
+      // 处理推迟状态下的倒计时，推迟结束时，转换为休息状态
       if (globalStatus === STATUS.delaying) {
         timeLeft = delayTime - (currentTime - startTime);
         if (currentTime - startTime >= delayTime) {
@@ -152,9 +184,13 @@ const setupTimeout = (params: {
           globalStatus = STATUS.breaking;
           mainWindow?.webContents.send('status', STATUS.breaking);
 
-          // 强制休息
+          // 开始强制休息
           showOverlay();
         }
+      }
+
+      if (globalStatus === STATUS.paused) {
+        timeLeft = workTime - (pausedTime - startTime);
       }
 
       tray?.setTitle(formatTime(timeLeft));
@@ -170,9 +206,10 @@ const setupTimeoutById = (id: number) => {
   }
   store.set(CURRENT_ID, id);
   // 通知render线程更新currentId
+  // TODO 这里应该创建统一的窗口管理器，避免多个窗口重复调用
   settingWindow?.webContents.send('updateCurrentId', id);
   mainWindow?.webContents.send('updateCurrentId', id);
-  const { workTime, breakTime, delayTime } = schedule;
+  const { workTime, breakTime, delayTime } = schedule as Schedule;
   setupTimeout({ workTime, breakTime, delayTime });
 };
 
@@ -256,12 +293,20 @@ app.on('activate', () => {
 /////////////////////////////////////////
 //         异步的主线程监听事件           //
 ////////////////////////////////////////
-ipcMain.on('skipBreak', () => {
-  skipBreak();
+ipcMain.on('pauseSchedule', () => {
+  pauseSchedule();
 });
 
-ipcMain.on('postponeBreak', () => {
-  postponeBreak();
+ipcMain.on('resumeSchedule', () => {
+  resumeSchedule();
+});
+
+ipcMain.on('skipSchedule', () => {
+  skipSchedule();
+});
+
+ipcMain.on('postponeSchedule', () => {
+  postponeSchedule();
 });
 
 ipcMain.on('disableSchedule', () => {
@@ -275,4 +320,8 @@ ipcMain.on('startSchedule', (_: IpcMainEvent, id: number) => {
     disableSchedule();
     setupTimeoutById(id);
   }
+});
+
+ipcMain.on('getStatus', (event: IpcMainEvent) => {
+  event.returnValue = globalStatus;
 });

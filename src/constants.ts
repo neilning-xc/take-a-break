@@ -3,6 +3,7 @@ export enum STATUS {
   working,
   breaking,
   delaying,
+  paused,
 }
 
 export const CURRENT_ID = 'currentId';
