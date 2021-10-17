@@ -22,6 +22,8 @@ import AppUpdater from '../libs/AppUpdater';
 import ReactBrowserWindow from '../libs/ReactBrowserWindow';
 import DB from '../libs/DB';
 
+const { screen } = require('electron');
+
 const store = new Store();
 
 type Timer = NodeJS.Timeout | null;
@@ -55,17 +57,22 @@ const hideOverlay = () => {
 };
 
 const showOverlay = () => {
-  // Create a window that fills the screen's available work area.
-  const { screen } = require('electron');
-  const primaryDisplay = screen.getPrimaryDisplay();
-  const { width, height } = primaryDisplay.workAreaSize;
-
   mainWindow?.show();
   mainWindow?.focus();
-  mainWindow?.setSize(width, height, true);
   mainWindow?.setPosition(0, 0, true);
-  // mainWindow?.setOpacity(0.5);
+  mainWindow?.setOpacity(0.5);
   mainWindow?.setAlwaysOnTop(true);
+
+  const opacityInterval = setInterval(() => {
+    if (mainWindow) {
+      const opacity = mainWindow.getOpacity();
+      if (opacity < 1) {
+        mainWindow.setOpacity(opacity + 0.02);
+      } else {
+        clearInterval(opacityInterval);
+      }
+    }
+  }, 800);
 };
 
 /**
@@ -218,7 +225,17 @@ const createWindow = async () => {
   // eslint-disable-next-line no-new
   new AppUpdater();
 
-  const reactBrowserWindow = ReactBrowserWindow.CreateWindow();
+  // Create a window that fills the screen's available work area.
+  const primaryDisplay = screen.getPrimaryDisplay();
+  const { width, height } = primaryDisplay.workAreaSize;
+  const reactBrowserWindow = ReactBrowserWindow.CreateWindow({
+    frame: false,
+    resizable: false,
+    movable: false,
+    transparent: true,
+    width,
+    height,
+  });
   mainWindow = reactBrowserWindow.browserWindow;
   mainWindow?.webContents.on('did-finish-load', () => {
     if (!mainWindow) {
