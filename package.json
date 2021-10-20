@@ -31,7 +31,7 @@
   },
   "build": {
     "productName": "Take a Break",
-    "appId": "org.erb.ElectronReact",
+    "appId": "org.neilning.TakeABreak",
     "asar": true,
     "asarUnpack": "**\\*.{node,dll}",
     "files": [
@@ -82,68 +82,33 @@
     ],
     "publish": {
       "provider": "github",
-      "owner": "take-a-break",
+      "owner": "NeilNing",
       "repo": "take-a-break"
     }
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/electron-react-boilerplate/electron-react-boilerplate.git"
+    "url": "git+https://github.com/neilning-xc/take-a-break.git"
   },
   "author": {
-    "name": "Electron React Boilerplate Maintainers",
-    "email": "electronreactboilerplate@gmail.com",
-    "url": "https://electron-react-boilerplate.js.org"
+    "name": "Neil Ning",
+    "email": "ningcorder@foxmail.com",
+    "url": "https://github.com/neilning-xc"
   },
-  "contributors": [
-    {
-      "name": "Amila Welihinda",
-      "email": "amilajack@gmail.com",
-      "url": "https://github.com/amilajack"
-    },
-    {
-      "name": "John Tran",
-      "email": "jptran318@gmail.com",
-      "url": "https://github.com/jooohhn"
-    }
-  ],
+  "contributors": [],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/electron-react-boilerplate/electron-react-boilerplate/issues"
+    "url": "https://github.com/neilning-xc/take-a-break/issues"
   },
   "keywords": [
     "electron",
-    "boilerplate",
     "react",
     "typescript",
-    "ts",
-    "sass",
     "webpack",
-    "hot",
-    "reload"
+    "break",
+    "schedule"
   ],
-  "homepage": "https://github.com/electron-react-boilerplate/electron-react-boilerplate#readme",
-  "jest": {
-    "testURL": "http://localhost/",
-    "moduleNameMapper": {
-      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/.erb/mocks/fileMock.js",
-      "\\.(css|less|sass|scss)$": "identity-obj-proxy"
-    },
-    "moduleFileExtensions": [
-      "js",
-      "jsx",
-      "ts",
-      "tsx",
-      "json"
-    ],
-    "moduleDirectories": [
-      "node_modules",
-      "build/app/node_modules"
-    ],
-    "setupFiles": [
-      "./.erb/scripts/check-build-exists.js"
-    ]
-  },
+  "homepage": "https://github.com/neilning-xc/take-a-break#readme",
   "devDependencies": {
     "@babel/core": "^7.14.8",
     "@babel/plugin-proposal-class-properties": "^7.14.5",
@@ -264,9 +229,6 @@
     "node": ">=10.x",
     "npm": ">=6.x",
     "yarn": ">=1.21.3"
-  },
-  "collective": {
-    "url": "https://opencollective.com/electron-react-boilerplate-594"
   },
   "browserslist": [],
   "prettier": {
