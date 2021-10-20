@@ -10,13 +10,7 @@ body {
   position: relative;
   color: white;
   height: 100vh;
-  /* background: linear-gradient(
-    200.96deg,
-    #fedc2a -29.09%,
-    #dd5789 51.77%,
-    #7a2c9e 129.35%
-  ); */
-  background-color: $primary-color;
+  // background-color: $primary-color;
   font-family: sans-serif;
   overflow-y: hidden;
   display: flex;
@@ -34,8 +28,12 @@ body {
   align-items: center;
 }
 
+.back-logo {
+  margin-bottom: 200px;
+}
+
 .neu {
-  height: 200px;
+  height: 60px;
   width: 200px;
   border-radius: 200px;
   background: $primary-color;
@@ -52,14 +50,14 @@ body {
 }
 
 .toolbar {
-  width: 250px;
-  margin-top: 40px;
+  width: 200px;
+  margin-top: 20px;
   display: flex;
   justify-content: space-between;
 
   button {
-    width: 70px;
-    height: 50px;
+    width: 60px;
+    height: 30px;
   }
 }
 

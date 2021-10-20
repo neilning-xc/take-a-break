@@ -59,14 +59,45 @@ const hideOverlay = () => {
 const showOverlay = () => {
   mainWindow?.show();
   mainWindow?.focus();
-  mainWindow?.setPosition(0, 0, true);
+  mainWindow?.setPosition(0, 0, false);
   mainWindow?.setOpacity(0.5);
-  mainWindow?.setAlwaysOnTop(true);
+  mainWindow?.setAlwaysOnTop(true, 'screen-saver');
+  // Menu.setApplicationMenu(null);
+
+  if (mainWindow) {
+    const primaryDisplay = screen.getPrimaryDisplay();
+    const { width: screenW, height: screenH } = primaryDisplay.size;
+    const width = 250;
+    const height = 150;
+    const offsetX = 0;
+    const offsetY = 100;
+    const x = screenW / 2 - width / 2 + offsetX;
+    const y = screenH / 2 - height / 2 + offsetY;
+
+    const child = ReactBrowserWindow.CreateWindow({
+      frame: false,
+      resizable: process.env.NODE_ENV === 'development',
+      movable: process.env.NODE_ENV === 'development',
+      parent: mainWindow,
+      width,
+      height,
+      x,
+      y,
+      backgroundColor: '#FFFFFF',
+      hasShadow: false,
+      pathname: '#/action',
+      transparent: true,
+      opacity: 0.8,
+    });
+    const childWindow = child.browserWindow;
+    childWindow?.show();
+    childWindow?.setAlwaysOnTop(true, 'screen-saver');
+  }
 
   const opacityInterval = setInterval(() => {
     if (mainWindow) {
       const opacity = mainWindow.getOpacity();
-      if (opacity < 1) {
+      if (opacity < 0.8) {
         mainWindow.setOpacity(opacity + 0.02);
       } else {
         clearInterval(opacityInterval);
@@ -227,14 +258,17 @@ const createWindow = async () => {
 
   // Create a window that fills the screen's available work area.
   const primaryDisplay = screen.getPrimaryDisplay();
-  const { width, height } = primaryDisplay.workAreaSize;
+  const { width, height } = primaryDisplay.size;
   const reactBrowserWindow = ReactBrowserWindow.CreateWindow({
     frame: false,
     resizable: false,
     movable: false,
     transparent: true,
+    backgroundColor: '#80000000',
     width,
     height,
+    autoHideMenuBar: true,
+    enableLargerThanScreen: true,
   });
   mainWindow = reactBrowserWindow.browserWindow;
   mainWindow?.webContents.on('did-finish-load', () => {

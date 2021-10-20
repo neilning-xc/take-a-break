@@ -22,7 +22,7 @@ export default class ReactBrowserWindow extends EventEmitter {
 
     this.browserWindow = this.createWindow();
 
-    ReactBrowserWindow.installExtensions();
+    this.installExtensions();
   }
 
   public createWindow() {
@@ -61,7 +61,8 @@ export default class ReactBrowserWindow extends EventEmitter {
     return browserWindow;
   }
 
-  static async installExtensions() {
+  // eslint-disable-next-line class-methods-use-this
+  async installExtensions() {
     if (
       process.env.NODE_ENV === 'development' ||
       process.env.DEBUG_PROD === 'true'
