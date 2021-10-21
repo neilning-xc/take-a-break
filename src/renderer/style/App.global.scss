@@ -3,14 +3,14 @@
  *        See https://github.com/webpack-contrib/sass-loader#imports
  */
 
-$primary-color: #ededed;
+$primary-color: #edededa4;
 $color: rgb(82, 82, 82);
 
 body {
   position: relative;
   color: white;
   height: 100vh;
-  // background-color: $primary-color;
+  background-color: $primary-color;
   font-family: sans-serif;
   overflow-y: hidden;
   display: flex;

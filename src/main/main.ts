@@ -33,7 +33,7 @@ const isDevelopment =
 
 let tray: Tray | null = null;
 let mainWindow: BrowserWindow | null = null;
-let settingWindow: BrowserWindow | null = null;
+let childWindow: BrowserWindow | null = null;
 let globalTimer: Timer = null;
 let globalStatus = STATUS.closed;
 let startTime = 0; // 记录点击开始按钮时的时间
@@ -54,6 +54,7 @@ const getTimestamp = () => {
 
 const hideOverlay = () => {
   mainWindow?.hide();
+  childWindow?.hide();
 };
 
 const showOverlay = () => {
@@ -62,7 +63,6 @@ const showOverlay = () => {
   mainWindow?.setPosition(0, 0, false);
   mainWindow?.setOpacity(0.5);
   mainWindow?.setAlwaysOnTop(true, 'screen-saver');
-  // Menu.setApplicationMenu(null);
 
   if (mainWindow) {
     const primaryDisplay = screen.getPrimaryDisplay();
@@ -74,22 +74,24 @@ const showOverlay = () => {
     const x = screenW / 2 - width / 2 + offsetX;
     const y = screenH / 2 - height / 2 + offsetY;
 
-    const child = ReactBrowserWindow.CreateWindow({
-      frame: false,
-      resizable: process.env.NODE_ENV === 'development',
-      movable: process.env.NODE_ENV === 'development',
-      parent: mainWindow,
-      width,
-      height,
-      x,
-      y,
-      backgroundColor: '#FFFFFF',
-      hasShadow: false,
-      pathname: '#/action',
-      transparent: true,
-      opacity: 0.8,
-    });
-    const childWindow = child.browserWindow;
+    if (childWindow === null) {
+      const child = ReactBrowserWindow.CreateWindow({
+        frame: false,
+        resizable: process.env.NODE_ENV === 'development',
+        movable: process.env.NODE_ENV === 'development',
+        parent: mainWindow,
+        width,
+        height,
+        x,
+        y,
+        backgroundColor: '#FFFFFF',
+        hasShadow: false,
+        pathname: '#/action',
+        transparent: true,
+        opacity: 0.8,
+      });
+      childWindow = child.browserWindow;
+    }
     childWindow?.show();
     childWindow?.setAlwaysOnTop(true, 'screen-saver');
   }
@@ -135,7 +137,7 @@ const skipSchedule = () => {
   if (globalStatus === STATUS.breaking) {
     globalStatus = STATUS.working;
     startTime = getTimestamp();
-    mainWindow?.webContents.send('status', globalStatus);
+    ReactBrowserWindow.send('status', globalStatus);
     hideOverlay();
   }
 };
@@ -159,13 +161,12 @@ const disableSchedule = () => {
     clearInterval(globalTimer);
     globalTimer = null;
     store.delete(CURRENT_ID);
-    settingWindow?.webContents.send('updateCurrentId', 0);
-    mainWindow?.webContents.send('updateCurrentId', 0);
+    ReactBrowserWindow.send('updateCurrentId', 0);
   }
 };
 
 const handleSettingClick = async () => {
-  settingWindow = await createSettingWindow();
+  await createSettingWindow();
 };
 
 const handleQuitClick = () => {
@@ -192,7 +193,7 @@ const setupTimeout = (params: {
           // 工作时间结束，开始休息
           startTime = currentTime;
           globalStatus = STATUS.breaking;
-          mainWindow?.webContents.send('status', STATUS.breaking);
+          ReactBrowserWindow.send('status', STATUS.breaking);
 
           // 强制休息
           showOverlay();
@@ -206,7 +207,7 @@ const setupTimeout = (params: {
           // 休息结束，开始工作
           startTime = currentTime;
           globalStatus = STATUS.working;
-          mainWindow?.webContents.send('status', STATUS.working);
+          ReactBrowserWindow.send('status', STATUS.working);
 
           // 结束强制休息
           hideOverlay();
@@ -220,7 +221,7 @@ const setupTimeout = (params: {
           // 工作时间结束，开始休息
           startTime = currentTime;
           globalStatus = STATUS.breaking;
-          mainWindow?.webContents.send('status', STATUS.breaking);
+          ReactBrowserWindow.send('status', STATUS.breaking);
 
           // 开始强制休息
           showOverlay();
@@ -232,7 +233,7 @@ const setupTimeout = (params: {
       }
 
       tray?.setTitle(formatTime(timeLeft));
-      mainWindow?.webContents.send('countdown', timeLeft);
+      ReactBrowserWindow.send('countdown', timeLeft);
     }, 1000);
   }
 };
@@ -244,9 +245,7 @@ const setupTimeoutById = (id: number) => {
   }
   store.set(CURRENT_ID, id);
   // 通知render线程更新currentId
-  // TODO 这里应该创建统一的窗口管理器，避免多个窗口重复调用
-  settingWindow?.webContents.send('updateCurrentId', id);
-  mainWindow?.webContents.send('updateCurrentId', id);
+  ReactBrowserWindow.send('updateCurrentId', id);
   const { workTime, breakTime, delayTime } = schedule as Schedule;
   setupTimeout({ workTime, breakTime, delayTime });
 };
