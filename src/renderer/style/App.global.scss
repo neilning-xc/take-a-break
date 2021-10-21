@@ -3,6 +3,8 @@
  *        See https://github.com/webpack-contrib/sass-loader#imports
  */
 
+@import '~antd/dist/antd.css';
+
 $primary-color: #edededa4;
 $color: rgb(82, 82, 82);
 
@@ -118,17 +120,17 @@ button.neu-button {
         cursor: pointer;
         padding: 0 10px;
 
-        &:hover {
-          background-color: #c7c7c7;
-        }
+        // &:hover {
+        //   background-color: #c7c7c7;
+        // }
       }
     }
 
     .menu-item {
-      height: 100px;
       width: 100%;
       display: flex;
       justify-content: space-between;
+      align-items: flex-start;
     }
 
     .schedule-info {
@@ -146,11 +148,12 @@ button.neu-button {
       display: flex;
       flex-direction: column;
       justify-content: center;
+      align-self: center;
 
-      button {
-        margin: 2px 0;
-        width: 60px;
-      }
+      // button {
+      //   margin: 2px 0;
+      //   width: 60px;
+      // }
     }
   }
 

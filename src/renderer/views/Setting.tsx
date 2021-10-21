@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, Switch, Route } from 'react-router-dom';
 import '../style/App.global.scss';
 import classNames from 'classnames';
+import { Divider } from 'antd';
 import ScheduleForm from '../components/ScheduleForm';
 import MenuItem from '../components/MenuItem';
 
@@ -75,6 +76,7 @@ const Setting: React.FunctionComponent = () => {
             <Link to="/setting/add-setting">添加</Link>
           </button>
         </div>
+
         <ul>
           {schedules.map((schedule: Schedule) => {
             return (
@@ -88,6 +90,7 @@ const Setting: React.FunctionComponent = () => {
                 <Link to={`/setting/${schedule.id}`}>
                   <MenuItem data={schedule} currentId={currentId} />
                 </Link>
+                <Divider style={{ margin: 5 }} />
               </li>
             );
           })}

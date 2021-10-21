@@ -1,5 +1,6 @@
 {
   "name": "take-a-break",
+  "version": "0.0.1",
   "productName": "Take a Break",
   "description": "TAB(Take a Break) application is based on React, React Router, Webpack, React Fast Refresh for rapid application development. It uses Electron React Boilerplate as the code skeleton.",
   "scripts": {
