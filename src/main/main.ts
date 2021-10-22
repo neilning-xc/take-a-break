@@ -61,7 +61,7 @@ const showOverlay = () => {
   mainWindow?.show();
   mainWindow?.focus();
   mainWindow?.setPosition(0, 0, false);
-  mainWindow?.setOpacity(0.5);
+  mainWindow?.setOpacity(0.2);
   mainWindow?.setAlwaysOnTop(true, 'screen-saver');
 
   if (mainWindow) {
@@ -89,6 +89,7 @@ const showOverlay = () => {
         pathname: '#/action',
         transparent: true,
         opacity: 0.8,
+        autoHideMenuBar: true,
       });
       childWindow = child.browserWindow;
     }
@@ -266,8 +267,8 @@ const createWindow = async () => {
     backgroundColor: '#80000000',
     width,
     height,
-    autoHideMenuBar: true,
     enableLargerThanScreen: true,
+    autoHideMenuBar: false,
   });
   mainWindow = reactBrowserWindow.browserWindow;
   mainWindow?.webContents.on('did-finish-load', () => {

@@ -1,4 +1,4 @@
-import { BrowserWindow, shell } from 'electron';
+import { BrowserWindow, shell, Menu } from 'electron';
 import { BrowserWindowConstructorOptions } from 'electron/main';
 import path from 'path';
 import { EventEmitter } from 'stream';
@@ -91,7 +91,9 @@ export default class ReactBrowserWindow extends EventEmitter {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static send(channel: string, ...args: any[]) {
     ReactBrowserWindow.windowsManager.forEach((window: BrowserWindow) => {
-      window?.webContents.send(channel, ...args);
+      if (!window.isDestroyed()) {
+        window?.webContents.send(channel, ...args);
+      }
     });
   }
 }

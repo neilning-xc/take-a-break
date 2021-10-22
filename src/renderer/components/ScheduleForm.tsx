@@ -14,21 +14,30 @@ const ScheduleForm: React.FunctionComponent<SetFormProp> = ({ data }) => {
   const [form] = Form.useForm<Schedule>();
 
   useEffect(() => {
+    const { workTime, breakTime, delayTime } = data;
+
     form.setFieldsValue({
       name: data.name,
       message: data.message,
-      workTime: data.workTime / 3600,
-      breakTime: data.breakTime / 60,
-      delayTime: data.delayTime / 60,
+      workTime:
+        process.env.NODE_ENV === 'production' ? workTime / 3600 : workTime,
+      breakTime:
+        process.env.NODE_ENV === 'production' ? breakTime / 60 : breakTime,
+      delayTime:
+        process.env.NODE_ENV === 'production' ? delayTime / 60 : delayTime,
     });
   });
 
   const handleFinish = (formData: Schedule) => {
+    const { workTime, breakTime, delayTime } = formData;
     const schedule = {
       id: data.id,
-      workTime: formData.workTime * 3600,
-      breakTime: formData.breakTime * 60,
-      delayTime: formData.delayTime * 60,
+      workTime:
+        process.env.NODE_ENV === 'production' ? workTime * 3600 : workTime,
+      breakTime:
+        process.env.NODE_ENV === 'production' ? breakTime * 60 : breakTime,
+      delayTime:
+        process.env.NODE_ENV === 'production' ? delayTime * 60 : delayTime,
       name: formData.name,
       message: formData.message,
     };
