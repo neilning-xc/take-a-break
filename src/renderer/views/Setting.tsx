@@ -5,19 +5,20 @@ import React, { useState, useEffect } from 'react';
 import { Link, Switch, Route } from 'react-router-dom';
 import '../style/App.global.scss';
 import classNames from 'classnames';
+import { Divider } from 'antd';
 import ScheduleForm from '../components/ScheduleForm';
 import MenuItem from '../components/MenuItem';
 
 const { ipcRenderer } = electron;
 
-const getEmpty: (count?: number) => Schedule = (count?: number) => {
+const getEmpty: () => Schedule = () => {
   return {
     id: 0,
-    name: `休息计划${count || 0}`,
-    message: '',
-    workTime: 0,
-    breakTime: 0,
-    delayTime: 0,
+    name: '休息计划',
+    message: '工作这么久了，请休息一下☕️',
+    workTime: 3600,
+    breakTime: 180,
+    delayTime: 300,
   };
 };
 
@@ -75,6 +76,7 @@ const Setting: React.FunctionComponent = () => {
             <Link to="/setting/add-setting">添加</Link>
           </button>
         </div>
+
         <ul>
           {schedules.map((schedule: Schedule) => {
             return (
@@ -88,6 +90,7 @@ const Setting: React.FunctionComponent = () => {
                 <Link to={`/setting/${schedule.id}`}>
                   <MenuItem data={schedule} currentId={currentId} />
                 </Link>
+                <Divider style={{ margin: 5 }} />
               </li>
             );
           })}
@@ -97,7 +100,7 @@ const Setting: React.FunctionComponent = () => {
       <div className="content">
         <Switch>
           <Route path="/setting/add-setting">
-            <ScheduleForm data={getEmpty(schedules.length + 1)} />
+            <ScheduleForm data={getEmpty()} />
           </Route>
           <Route path="/setting/:id">
             <ScheduleForm data={currentRow} />

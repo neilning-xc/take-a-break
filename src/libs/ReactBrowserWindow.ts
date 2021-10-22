@@ -5,12 +5,18 @@ import { EventEmitter } from 'stream';
 import MenuBuilder from '../main/menu';
 import { getAssetPath, installExtensions, resolveHtmlPath } from '../main/util';
 
+// 实现类似于
+
 export default class ReactBrowserWindow extends EventEmitter {
   public browserWindow: BrowserWindow | null = null;
 
   public option: ReactBrowserWindowOption = {};
 
   public pathname = '';
+
+  // 静态属性用于保存所有创建的窗口实利
+  // TODO: 后续优化：设置最大数组长度，避免保存过多对象，导致性能问题
+  static windowsManager: BrowserWindow[] = [];
 
   constructor(option: ReactBrowserWindowOption) {
     super();
@@ -22,7 +28,9 @@ export default class ReactBrowserWindow extends EventEmitter {
 
     this.browserWindow = this.createWindow();
 
-    ReactBrowserWindow.installExtensions();
+    ReactBrowserWindow.windowsManager.push(this.browserWindow);
+
+    this.installExtensions();
   }
 
   public createWindow() {
@@ -61,7 +69,8 @@ export default class ReactBrowserWindow extends EventEmitter {
     return browserWindow;
   }
 
-  static async installExtensions() {
+  // eslint-disable-next-line class-methods-use-this
+  async installExtensions() {
     if (
       process.env.NODE_ENV === 'development' ||
       process.env.DEBUG_PROD === 'true'
@@ -72,5 +81,17 @@ export default class ReactBrowserWindow extends EventEmitter {
 
   static CreateWindow(option: ReactBrowserWindowOption = {}) {
     return new ReactBrowserWindow(option);
+  }
+
+  /**
+   * 同时向所有已经创建的窗口实例发送数据
+   * @param channel
+   * @param args
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  static send(channel: string, ...args: any[]) {
+    ReactBrowserWindow.windowsManager.forEach((window: BrowserWindow) => {
+      window?.webContents.send(channel, ...args);
+    });
   }
 }

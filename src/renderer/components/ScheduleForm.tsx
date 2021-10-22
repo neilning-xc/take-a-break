@@ -1,7 +1,8 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import '../style/App.global.scss';
+import { Button, Form, Input, InputNumber } from 'antd';
 
 const { ipcRenderer } = electron;
 
@@ -10,20 +11,26 @@ interface SetFormProp {
 }
 
 const ScheduleForm: React.FunctionComponent<SetFormProp> = ({ data }) => {
-  const [name, updateName] = useState<string>(data.name as string);
-  const [message, updateMsg] = useState<string>(data.message as string);
-  const [workTime, updateWorkTime] = useState<number>(data.workTime || 0);
-  const [breakTime, updateBreakTime] = useState<number>(data.breakTime || 0);
-  const [delayTime, updateDelayTime] = useState<number>(data.delayTime || 0);
+  const [form] = Form.useForm<Schedule>();
 
-  const handleSaveClick = () => {
+  useEffect(() => {
+    form.setFieldsValue({
+      name: data.name,
+      message: data.message,
+      workTime: data.workTime / 3600,
+      breakTime: data.breakTime / 60,
+      delayTime: data.delayTime / 60,
+    });
+  });
+
+  const handleFinish = (formData: Schedule) => {
     const schedule = {
-      workTime,
-      breakTime,
-      delayTime,
       id: data.id,
-      name,
-      message,
+      workTime: formData.workTime * 3600,
+      breakTime: formData.breakTime * 60,
+      delayTime: formData.delayTime * 60,
+      name: formData.name,
+      message: formData.message,
     };
     if (data.id === 0) {
       ipcRenderer.addConfig(schedule);
@@ -32,90 +39,62 @@ const ScheduleForm: React.FunctionComponent<SetFormProp> = ({ data }) => {
     }
   };
 
-  useEffect(() => {
-    updateWorkTime(data.workTime);
-    updateBreakTime(data.breakTime);
-    updateDelayTime(data.delayTime);
-  }, [data]);
-
   return (
-    <form className="form">
-      <div className="row">
-        <label>名称</label>
-        <div className="field">
-          <input
-            name="name"
-            value={name}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-              updateName(event.target.value)
-            }
-            type="text"
-            placeholder="名称"
-          />
-        </div>
-      </div>
-      <div className="row">
-        <label>工作时间</label>
-        <div className="field">
-          <input
-            name="work-time"
-            value={workTime}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-              updateWorkTime(Number(event.target.value))
-            }
-            type="text"
-            placeholder="工作时间"
-          />
-        </div>
-      </div>
-      <div className="row">
-        <label>休息时间</label>
-        <div className="field">
-          <input
-            name="break-time"
-            value={breakTime}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-              updateBreakTime(Number(event.target.value))
-            }
-            type="text"
-            placeholder="休息时间"
-          />
-        </div>
-      </div>
-      <div className="row">
-        <label>推迟时间</label>
-        <div className="field">
-          <input
-            name="delay-time"
-            value={delayTime}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-              updateDelayTime(Number(event.target.value))
-            }
-            type="text"
-            placeholder="推迟时间"
-          />
-        </div>
-      </div>
-      <div className="row">
-        <label>提示内容</label>
-        <div className="field">
-          <input
-            name="message"
-            value={message}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-              updateMsg(event.target.value)
-            }
-            type="text"
-            placeholder="提示内容"
-          />
-        </div>
-      </div>
-      <div className="row">
-        <button className="neu-button" type="button" onClick={handleSaveClick}>
+    <Form
+      layout="vertical"
+      style={{ width: 350 }}
+      form={form}
+      onFinish={handleFinish}
+    >
+      <Form.Item name="name" label="名称" rules={[{ required: true }]}>
+        <Input placeholder="请填写名称" />
+      </Form.Item>
+
+      <Form.Item
+        label="工作时间（小时）"
+        name="workTime"
+        rules={[{ required: true, type: 'number', min: 1 }]}
+      >
+        <InputNumber
+          min={1}
+          style={{ width: '100%' }}
+          placeholder="设置工作时间（小时）"
+        />
+      </Form.Item>
+      <Form.Item
+        label="休息时间（分钟）"
+        name="breakTime"
+        rules={[{ required: true, type: 'number', min: 1 }]}
+      >
+        <InputNumber
+          min={1}
+          style={{ width: '100%' }}
+          placeholder="设置休息时间（分钟）"
+        />
+      </Form.Item>
+
+      <Form.Item
+        label="推迟时间（分钟）"
+        name="delayTime"
+        rules={[{ required: true, type: 'number', min: 1 }]}
+      >
+        <InputNumber
+          min={1}
+          style={{ width: '100%' }}
+          placeholder="设置休息时间（分钟）"
+        />
+      </Form.Item>
+
+      <Form.Item name="message" label="提示内容">
+        <Input placeholder="请输入提示内容" />
+      </Form.Item>
+
+      <Form.Item>
+        <Button type="primary" htmlType="submit">
           保存
-        </button>
-      </div>
-    </form>
+        </Button>
+      </Form.Item>
+    </Form>
   );
 };
 
