@@ -88,7 +88,11 @@ const Setting: React.FunctionComponent = () => {
                 onClick={() => handleMenuClick(schedule)}
               >
                 <Link to={`/setting/${schedule.id}`}>
-                  <MenuItem data={schedule} currentId={currentId} />
+                  <MenuItem
+                    key={schedule.id}
+                    data={schedule}
+                    currentId={currentId}
+                  />
                 </Link>
                 <Divider style={{ margin: 5 }} />
               </li>

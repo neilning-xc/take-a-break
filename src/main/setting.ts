@@ -12,7 +12,7 @@
  */
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
-import { BrowserWindow, ipcMain, IpcMainEvent, dialog } from 'electron';
+import { BrowserWindow, ipcMain, IpcMainEvent, dialog, Menu } from 'electron';
 import Store from 'electron-store';
 import ReactBrowserWindow from '../libs/ReactBrowserWindow';
 import DB from '../libs/DB';
@@ -30,6 +30,7 @@ const createSettingWindow: () => Promise<BrowserWindow | null> = async () => {
     width: 2560,
     height: 1600,
     pathname: '#/setting',
+    autoHideMenuBar: true,
   });
 
   settingWindow = reactBrowserWindow.browserWindow;

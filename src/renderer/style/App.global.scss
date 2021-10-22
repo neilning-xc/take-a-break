@@ -48,6 +48,7 @@ body {
   h3 {
     font-size: 40px;
     font-weight: 100;
+    margin: 0;
   }
 }
 
@@ -119,10 +120,6 @@ button.neu-button {
         list-style: none;
         cursor: pointer;
         padding: 0 10px;
-
-        // &:hover {
-        //   background-color: #c7c7c7;
-        // }
       }
     }
 
@@ -149,11 +146,6 @@ button.neu-button {
       flex-direction: column;
       justify-content: center;
       align-self: center;
-
-      // button {
-      //   margin: 2px 0;
-      //   width: 60px;
-      // }
     }
   }
 
