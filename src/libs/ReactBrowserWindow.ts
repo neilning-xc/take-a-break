@@ -1,4 +1,4 @@
-import { BrowserWindow, shell, Menu } from 'electron';
+import { BrowserWindow, shell } from 'electron';
 import { BrowserWindowConstructorOptions } from 'electron/main';
 import path from 'path';
 import { EventEmitter } from 'stream';

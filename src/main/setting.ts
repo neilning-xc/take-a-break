@@ -12,7 +12,7 @@
  */
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
-import { BrowserWindow, ipcMain, IpcMainEvent, dialog, Menu } from 'electron';
+import { BrowserWindow, ipcMain, IpcMainEvent, dialog } from 'electron';
 import Store from 'electron-store';
 import ReactBrowserWindow from '../libs/ReactBrowserWindow';
 import DB from '../libs/DB';
