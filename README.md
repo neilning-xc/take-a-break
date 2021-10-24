@@ -1,3 +1,10 @@
+<div align="center">
+
+![test](https://github.com/neilning-xc/take-a-break/actions/workflows/test.yml/badge.svg) 
+![publish](https://github.com/neilning-xc/take-a-break/actions/workflows/publish.yml/badge.svg)
+
+</div>
+
 # Take a break
 
 This application remind people to have a break.
