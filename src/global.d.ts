@@ -21,4 +21,10 @@ interface Window {
   electron?: any;
 }
 
+interface IPreference {
+  skipScreenSaver: boolean;
+  skipScreenLock: boolean;
+  skipDoNotDisturb: boolean;
+}
+
 declare const electron: any;

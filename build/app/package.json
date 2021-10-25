@@ -1,6 +1,6 @@
 {
-  "name": "take-a-brea",
-  "productName": "take-a-break",
+  "name": "take-a-break",
+  "productName": "Take a break",
   "version": "0.0.1",
   "description": "Take a break after hours harding working",
   "main": "./dist/main/main.js",

@@ -4,18 +4,12 @@ import EventEmitter from 'events';
 import { PREFERENCE } from '../constants';
 import ScheduleTimer from './ScheduleTimer';
 
-interface IPreference {
-  skipScreenSaver: boolean;
-  skipScreenLock: boolean;
-  skipDoNotDisturb: boolean;
-}
-
 const store = new Store();
 if (!store.has(PREFERENCE)) {
   store.set(PREFERENCE, {
     skipScreenSaver: true,
     skipScreenLock: true,
-    skipDoNotDisturb: true,
+    skipDoNotDisturb: false,
   });
 }
 const preference = <IPreference>store.get(PREFERENCE);

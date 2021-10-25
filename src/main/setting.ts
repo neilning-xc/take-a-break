@@ -16,7 +16,7 @@ import { BrowserWindow, ipcMain, IpcMainEvent, dialog } from 'electron';
 import Store from 'electron-store';
 import ReactBrowserWindow from '../libs/ReactBrowserWindow';
 import DB from '../libs/DB';
-import { CURRENT_ID } from '../constants';
+import { CURRENT_ID, PREFERENCE } from '../constants';
 
 let settingWindow: BrowserWindow | null = null;
 
@@ -59,7 +59,7 @@ ipcMain.on('updateConfig', (_: IpcMainEvent, args: Schedule) => {
       message: '更新成功',
     });
     const records = DB('schedule').findAll();
-    settingWindow?.webContents.send('updateSchedules', records);
+    ReactBrowserWindow.send('updateSchedules', records);
   } catch {
     dialog.showErrorBox('结果', '更新失败');
   }
@@ -72,7 +72,7 @@ ipcMain.on('removeConfig', (_: IpcMainEvent, id: number) => {
       message: '删除成功',
     });
     const records = DB('schedule').findAll();
-    settingWindow?.webContents.send('updateSchedules', records);
+    ReactBrowserWindow.send('updateSchedules', records);
   } catch {
     dialog.showErrorBox('结果', '删除失败');
   }
@@ -85,7 +85,7 @@ ipcMain.on('addConfig', (_: IpcMainEvent, schedule: Schedule) => {
       message: '添加成功',
     });
     const records = DB('schedule').findAll();
-    settingWindow?.webContents.send('updateSchedules', records);
+    ReactBrowserWindow.send('updateSchedules', records);
   } catch {
     dialog.showErrorBox('结果', '添加失败');
   }
@@ -102,6 +102,11 @@ ipcMain.on('getSchedules', (event: IpcMainEvent) => {
 ipcMain.on('getCurrentId', (event: IpcMainEvent) => {
   const currentId = new Store().get(CURRENT_ID);
   event.returnValue = currentId;
+});
+
+ipcMain.on('getPreference', (event: IpcMainEvent) => {
+  const preference = new Store().get(PREFERENCE);
+  event.returnValue = preference;
 });
 
 export default createSettingWindow;

@@ -35,6 +35,9 @@ contextBridge.exposeInMainWorld('electron', {
     getCurrentId() {
       return ipcRenderer.sendSync('getCurrentId');
     },
+    getPreference() {
+      return ipcRenderer.sendSync('getPreference');
+    },
     getStatus() {
       return ipcRenderer.sendSync('getStatus');
     },

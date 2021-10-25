@@ -1,7 +1,7 @@
 {
   "name": "take-a-break",
   "version": "0.0.1",
-  "productName": "take a break",
+  "productName": "Take a break",
   "description": "Take a break after hours harding working",
   "scripts": {
     "build": "concurrently \"yarn build:main\" \"yarn build:renderer\"",
@@ -17,7 +17,7 @@
     "test": "jest"
   },
   "build": {
-    "productName": "take a break",
+    "productName": "Take a break",
     "appId": "org.neilning.TakeABreak",
     "asar": true,
     "asarUnpack": "**\\*.{node,dll}",
