@@ -160,31 +160,7 @@ button.neu-button {
     margin-bottom: 20px;
   }
 
-  form {
-    label {
-      display: block;
-      margin-bottom: 5px;
-      padding: 0 10px;
-    }
-
-    .field {
-      color: #555;
-      border-radius: 25px;
-      box-shadow: inset 8px 8px 8px #cbced1, inset -8px -8px 8px #ffffff;
-
-      input {
-        border: none;
-        outline: none;
-        background: none;
-        height: 50px;
-        width: 300px;
-        padding: 0 20px;
-      }
-    }
-
-    button {
-      height: 45px;
-      width: 100%;
-    }
+  .custom-menu {
+    background-color: $primary-color;
   }
 }

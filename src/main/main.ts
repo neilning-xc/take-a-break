@@ -14,19 +14,23 @@ import 'regenerator-runtime/runtime';
 import { app, BrowserWindow, Menu, Tray, ipcMain } from 'electron';
 import { IpcMainEvent } from 'electron/main';
 import Store from 'electron-store';
+import Preference from '../libs/Preference';
 import { getAssetPath } from './util';
 import { formatTime } from '../renderer/views/util';
-import { CURRENT_ID, STATUS } from '../constants';
+import { CURRENT_ID } from '../constants';
 import createSettingWindow from './setting';
 import AppUpdater from '../libs/AppUpdater';
 import ReactBrowserWindow from '../libs/ReactBrowserWindow';
 import DB from '../libs/DB';
+import ScheduleTimer from '../libs/ScheduleTimer';
 
 const { screen } = require('electron');
 
 const store = new Store();
+const scheduleTimer = new ScheduleTimer();
 
-type Timer = NodeJS.Timeout | null;
+const preference = new Preference(scheduleTimer);
+preference.init();
 
 const isDevelopment =
   process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
@@ -34,10 +38,6 @@ const isDevelopment =
 let tray: Tray | null = null;
 let mainWindow: BrowserWindow | null = null;
 let childWindow: BrowserWindow | null = null;
-let globalTimer: Timer = null;
-let globalStatus = STATUS.closed;
-let startTime = 0; // 记录点击开始按钮时的时间
-let pausedTime = 0; // 记录点击暂停按钮时的时间
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -46,11 +46,6 @@ if (process.env.NODE_ENV === 'production') {
 if (isDevelopment) {
   require('electron-debug')();
 }
-
-// 获取当时时间戳
-const getTimestamp = () => {
-  return Math.floor(new Date().getTime() / 1000);
-};
 
 const hideOverlay = () => {
   mainWindow?.hide();
@@ -109,61 +104,27 @@ const showOverlay = () => {
   }, 800);
 };
 
-/**
- * 暂停当前计划，只能从工作状态暂停，进入暂停状态
- */
-const pauseSchedule = () => {
-  if (globalStatus === STATUS.working) {
-    globalStatus = STATUS.paused;
-    pausedTime = getTimestamp();
-  }
-};
-
-/**
- * 恢复当前计划，只能从暂停状态进入工作状态
- */
-const resumeSchedule = () => {
-  if (globalStatus === STATUS.paused) {
-    globalStatus = STATUS.working;
-    const currentTime = getTimestamp();
-    // 设置新的开始时间，以便恢复工作状态时，能够重新得到暂停前的剩余时间
-    startTime += currentTime - pausedTime;
-  }
-};
-
-/**
- * 强制跳过计划，只能从休息状态下跳过休息，进入工作状态
- */
-const skipSchedule = () => {
-  if (globalStatus === STATUS.breaking) {
-    globalStatus = STATUS.working;
-    startTime = getTimestamp();
-    ReactBrowserWindow.send('status', globalStatus);
-    hideOverlay();
-  }
-};
-
-/**
- * 强制推迟计划，只能从休息状态推迟，进入推迟状态
- */
-const postponeSchedule = () => {
-  if (globalStatus === STATUS.breaking) {
-    globalStatus = STATUS.delaying;
-    startTime = getTimestamp();
-    hideOverlay();
-  }
-};
+scheduleTimer.on('countdown', (timeLeft: number) => {
+  tray?.setTitle(formatTime(timeLeft));
+  ReactBrowserWindow.send('countdown', timeLeft);
+});
+scheduleTimer.on('break', (status) => {
+  ReactBrowserWindow.send('status', status);
+  // 强制休息
+  showOverlay();
+});
+scheduleTimer.on('working', (status) => {
+  ReactBrowserWindow.send('status', status);
+  // 结束强制休息
+  hideOverlay();
+});
 
 /**
  * 禁用当前schedule,同时通知render线程更新当前正在运行的id
  */
 const disableSchedule = () => {
-  if (globalTimer) {
-    clearInterval(globalTimer);
-    globalTimer = null;
-    store.delete(CURRENT_ID);
-    ReactBrowserWindow.send('updateCurrentId', 0);
-  }
+  scheduleTimer.disable();
+  ReactBrowserWindow.send('updateCurrentId', 0);
 };
 
 const handleSettingClick = async () => {
@@ -172,71 +133,6 @@ const handleSettingClick = async () => {
 
 const handleQuitClick = () => {
   app.quit();
-};
-
-const setupTimeout = (params: {
-  workTime: number;
-  breakTime: number;
-  delayTime: number;
-}) => {
-  const { workTime, breakTime, delayTime } = params;
-  if (globalTimer === null) {
-    startTime = getTimestamp();
-    globalStatus = STATUS.working;
-    globalTimer = setInterval(() => {
-      const currentTime = getTimestamp();
-      let timeLeft = 0;
-
-      // 处理工作状态倒计时
-      if (globalStatus === STATUS.working) {
-        timeLeft = workTime - (currentTime - startTime);
-        if (currentTime - startTime >= workTime) {
-          // 工作时间结束，开始休息
-          startTime = currentTime;
-          globalStatus = STATUS.breaking;
-          ReactBrowserWindow.send('status', STATUS.breaking);
-
-          // 强制休息
-          showOverlay();
-        }
-      }
-
-      // 处理休息状态的倒计时，休息结束时转换为工作状态
-      if (globalStatus === STATUS.breaking) {
-        timeLeft = breakTime - (currentTime - startTime);
-        if (currentTime - startTime >= breakTime) {
-          // 休息结束，开始工作
-          startTime = currentTime;
-          globalStatus = STATUS.working;
-          ReactBrowserWindow.send('status', STATUS.working);
-
-          // 结束强制休息
-          hideOverlay();
-        }
-      }
-
-      // 处理推迟状态下的倒计时，推迟结束时，转换为休息状态
-      if (globalStatus === STATUS.delaying) {
-        timeLeft = delayTime - (currentTime - startTime);
-        if (currentTime - startTime >= delayTime) {
-          // 工作时间结束，开始休息
-          startTime = currentTime;
-          globalStatus = STATUS.breaking;
-          ReactBrowserWindow.send('status', STATUS.breaking);
-
-          // 开始强制休息
-          showOverlay();
-        }
-      }
-
-      if (globalStatus === STATUS.paused) {
-        timeLeft = workTime - (pausedTime - startTime);
-      }
-
-      tray?.setTitle(formatTime(timeLeft));
-      ReactBrowserWindow.send('countdown', timeLeft);
-    }, 1000);
-  }
 };
 
 const setupTimeoutById = (id: number) => {
@@ -248,7 +144,7 @@ const setupTimeoutById = (id: number) => {
   // 通知render线程更新currentId
   ReactBrowserWindow.send('updateCurrentId', id);
   const { workTime, breakTime, delayTime } = schedule as Schedule;
-  setupTimeout({ workTime, breakTime, delayTime });
+  scheduleTimer.start({ workTime, breakTime, delayTime });
 };
 
 const createWindow = async () => {
@@ -344,25 +240,39 @@ app.on('activate', () => {
 /////////////////////////////////////////
 //         异步的主线程监听事件           //
 ////////////////////////////////////////
+
+/**
+ * 暂停当前计划，只能从工作状态暂停，进入暂停状态
+ */
 ipcMain.on('pauseSchedule', () => {
-  pauseSchedule();
+  scheduleTimer.pause();
 });
 
+/**
+ * 恢复当前计划，只能从暂停状态进入工作状态
+ */
 ipcMain.on('resumeSchedule', () => {
-  resumeSchedule();
+  scheduleTimer.resume();
 });
 
+/**
+ * 强制跳过计划，只能从休息状态下跳过休息，进入工作状态
+ */
 ipcMain.on('skipSchedule', () => {
-  skipSchedule();
+  scheduleTimer.skip();
+  ReactBrowserWindow.send('status', scheduleTimer.globalStatus);
+  hideOverlay();
 });
 
+/**
+ * 强制推迟计划，只能从休息状态推迟，进入推迟状态
+ */
 ipcMain.on('postponeSchedule', () => {
-  postponeSchedule();
+  scheduleTimer.postpone();
+  hideOverlay();
 });
 
-ipcMain.on('disableSchedule', () => {
-  disableSchedule();
-});
+ipcMain.on('disableSchedule', disableSchedule);
 
 ipcMain.on('startSchedule', (_: IpcMainEvent, id: number) => {
   if (!store.has(CURRENT_ID)) {
@@ -374,5 +284,5 @@ ipcMain.on('startSchedule', (_: IpcMainEvent, id: number) => {
 });
 
 ipcMain.on('getStatus', (event: IpcMainEvent) => {
-  event.returnValue = globalStatus;
+  event.returnValue = scheduleTimer.globalStatus;
 });
