@@ -7,11 +7,16 @@ type Timer = NodeJS.Timeout | null;
 class ScheduleTimer extends EventEmitter {
   public globalTimer: Timer = null;
 
-  public globalStatus = STATUS.closed;
+  public globalStatus: STATUS;
 
   public startTime = 0; // 记录点击开始按钮时的时间
 
   public pausedTime = 0; // 记录点击暂停按钮时的时间
+
+  private constructor() {
+    super();
+    this.globalStatus = STATUS.closed;
+  }
 
   public start(params: Pick<Schedule, 'workTime' | 'breakTime' | 'delayTime'>) {
     const { workTime, breakTime, delayTime } = params;
@@ -31,10 +36,6 @@ class ScheduleTimer extends EventEmitter {
             this.globalStatus = STATUS.breaking;
 
             this.emit('break', this.globalStatus);
-            // ReactBrowserWindow.send('status', STATUS.breaking);
-
-            // 强制休息
-            // showOverlay();
           }
         }
 
@@ -46,10 +47,6 @@ class ScheduleTimer extends EventEmitter {
             this.startTime = currentTime;
             this.globalStatus = STATUS.working;
             this.emit('working', this.globalStatus);
-            // ReactBrowserWindow.send('status', STATUS.working);
-
-            // 结束强制休息
-            // hideOverlay();
           }
         }
 
@@ -61,10 +58,6 @@ class ScheduleTimer extends EventEmitter {
             this.startTime = currentTime;
             this.globalStatus = STATUS.breaking;
             this.emit('break');
-            // ReactBrowserWindow.send('status', STATUS.breaking);
-
-            // 开始强制休息
-            // showOverlay();
           }
         }
 
@@ -73,8 +66,6 @@ class ScheduleTimer extends EventEmitter {
         }
 
         this.emit('countdown', timeLeft);
-        // tray?.setTitle(formatTime(timeLeft));
-        // ReactBrowserWindow.send('countdown', timeLeft);
       }, 1000);
     }
   }
@@ -114,6 +105,20 @@ class ScheduleTimer extends EventEmitter {
       clearInterval(this.globalTimer);
       this.globalTimer = null;
     }
+  }
+
+  static instance: ScheduleTimer | null = null;
+
+  /**
+   * 目前支持单个schedule，所以使用单例模式保证全局拿到的是同一个timer对象
+   * @param scheduleTimer
+   * @returns
+   */
+  static getInstance() {
+    if (ScheduleTimer.instance === null) {
+      ScheduleTimer.instance = new ScheduleTimer();
+    }
+    return ScheduleTimer.instance;
   }
 }
 

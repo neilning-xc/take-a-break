@@ -16,10 +16,11 @@ const Preference: React.FunctionComponent = () => {
     setPreference(data);
   }, []);
 
-  const handleCheckboxChange = (key: string, value: boolean) => {
+  const handleCheckboxChange = (key: keyof IPreference, value: boolean) => {
     const data = { ...preference };
     data[key] = value;
     setPreference(data);
+    ipcRenderer.savePreference(data);
   };
 
   return (

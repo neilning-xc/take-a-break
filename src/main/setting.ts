@@ -91,6 +91,10 @@ ipcMain.on('addConfig', (_: IpcMainEvent, schedule: Schedule) => {
   }
 });
 
+ipcMain.on('savePreference', (_: IpcMainEvent, preference: IPreference) => {
+  new Store().set(PREFERENCE, preference);
+});
+
 /////////////////////////////////////////
 //         同步的主线程监听事件           //
 ////////////////////////////////////////
