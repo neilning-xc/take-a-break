@@ -6,7 +6,7 @@ import { Link, Switch, Route } from 'react-router-dom';
 import '../style/App.global.scss';
 import classNames from 'classnames';
 import { Divider, Menu } from 'antd';
-import { CloseCircleOutlined, SettingOutlined } from '@ant-design/icons';
+import { SettingOutlined } from '@ant-design/icons';
 import ScheduleForm from '../components/ScheduleForm';
 import MenuItem from '../components/MenuItem';
 import Exclude from './Exclude';
