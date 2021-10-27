@@ -27,10 +27,9 @@ const createSettingWindow: () => Promise<BrowserWindow | null> = async () => {
     return settingWindow;
   }
   const reactBrowserWindow = ReactBrowserWindow.CreateWindow({
-    width: 2560,
-    height: 1600,
-    pathname: '#/setting',
-    autoHideMenuBar: true,
+    width: 800,
+    height: 600,
+    pathname: '#/setting/preference',
   });
 
   settingWindow = reactBrowserWindow.browserWindow;

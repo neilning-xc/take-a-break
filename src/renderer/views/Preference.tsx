@@ -8,7 +8,7 @@ const Preference: React.FunctionComponent = () => {
   const [preference, setPreference] = useState<IPreference>({
     skipScreenSaver: true,
     skipScreenLock: true,
-    skipDoNotDisturb: false,
+    loginStart: false,
   });
 
   useEffect(() => {
@@ -24,7 +24,7 @@ const Preference: React.FunctionComponent = () => {
   };
 
   return (
-    <div>
+    <div className="preference">
       <div>
         <Checkbox
           onChange={(event: CheckboxChangeEvent) =>
@@ -35,7 +35,7 @@ const Preference: React.FunctionComponent = () => {
           锁屏时跳过
         </Checkbox>
       </div>
-      <div>
+      {/* <div>
         <Checkbox
           onChange={(event: CheckboxChangeEvent) =>
             handleCheckboxChange('skipScreenSaver', event.target.checked)
@@ -44,15 +44,15 @@ const Preference: React.FunctionComponent = () => {
         >
           屏幕保护程序启动时跳过
         </Checkbox>
-      </div>
+      </div> */}
       <div>
         <Checkbox
           onChange={(event: CheckboxChangeEvent) =>
-            handleCheckboxChange('skipDoNotDisturb', event.target.checked)
+            handleCheckboxChange('loginStart', event.target.checked)
           }
-          checked={preference.skipDoNotDisturb}
+          checked={preference.loginStart}
         >
-          勿扰模式打开时跳过
+          开机启动
         </Checkbox>
       </div>
     </div>

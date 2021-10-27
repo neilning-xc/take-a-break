@@ -151,9 +151,25 @@ button.neu-button {
 
   .content {
     flex: 1 auto;
+
+    & > div {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .schedule-form {
+    flex: 1 auto;
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .preference {
+    padding: 60px;
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .row {

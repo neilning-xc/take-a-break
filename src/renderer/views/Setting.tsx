@@ -103,11 +103,11 @@ const Setting: React.FunctionComponent = () => {
           })}
         </ul>
         <Menu mode="inline" className="custom-menu">
-          <Menu.Item key="exclude" icon={<CloseCircleOutlined />}>
+          {/* <Menu.Item key="exclude" icon={<CloseCircleOutlined />}>
             <Link to="/setting/exclude">例外程序</Link>
-          </Menu.Item>
+          </Menu.Item> */}
           <Menu.Item key="preference" icon={<SettingOutlined />}>
-            <Link to="/setting/preference">其他</Link>
+            <Link to="/setting/preference">设置</Link>
           </Menu.Item>
         </Menu>
       </div>

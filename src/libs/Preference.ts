@@ -1,4 +1,4 @@
-import { powerMonitor } from 'electron';
+import { app, powerMonitor } from 'electron';
 import Store from 'electron-store';
 import { PREFERENCE, STATUS } from '../constants';
 import ScheduleTimer from './ScheduleTimer';
@@ -8,7 +8,7 @@ if (!store.has(PREFERENCE)) {
   store.set(PREFERENCE, {
     skipScreenSaver: true,
     skipScreenLock: true,
-    skipDoNotDisturb: false,
+    loginStart: true,
   });
 }
 
@@ -29,7 +29,25 @@ export function resumeSchedule() {
   }
 }
 
+export function setLoginItem() {
+  const preference = <IPreference>store.get(PREFERENCE);
+  app.setLoginItemSettings({
+    openAtLogin: preference.loginStart,
+    openAsHidden: true,
+  });
+}
+
 export function listenScreenLock() {
   powerMonitor.addListener('lock-screen', pauseSchedule);
   powerMonitor.addListener('unlock-screen', resumeSchedule);
+}
+
+export function init() {
+  listenScreenLock();
+
+  // 如果还没有设置登录时打开
+  const setting = app.getLoginItemSettings();
+  if (!setting.openAtLogin) {
+    setLoginItem();
+  }
 }

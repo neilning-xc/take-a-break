@@ -14,7 +14,7 @@ import 'regenerator-runtime/runtime';
 import { app, BrowserWindow, Menu, Tray, ipcMain } from 'electron';
 import { IpcMainEvent } from 'electron/main';
 import Store from 'electron-store';
-import { listenScreenLock } from '../libs/Preference';
+import * as Preference from '../libs/Preference';
 import { getAssetPath } from './util';
 import { formatTime } from '../renderer/views/util';
 import { CURRENT_ID } from '../constants';
@@ -29,7 +29,7 @@ const { screen } = require('electron');
 const store = new Store();
 const scheduleTimer = ScheduleTimer.getInstance();
 
-listenScreenLock();
+Preference.init();
 
 const isDevelopment =
   process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';

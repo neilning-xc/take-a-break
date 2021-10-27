@@ -24,7 +24,7 @@ interface Window {
 interface IPreference {
   skipScreenSaver: boolean;
   skipScreenLock: boolean;
-  skipDoNotDisturb: boolean;
+  loginStart: boolean;
 }
 
 declare const electron: any;
