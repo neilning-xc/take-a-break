@@ -13,7 +13,6 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import { app, BrowserWindow, Menu, Tray, ipcMain } from 'electron';
 import { IpcMainEvent } from 'electron/main';
-import Store from 'electron-store';
 import * as Preference from '../libs/Preference';
 import { getAssetPath } from './util';
 import { formatTime } from '../renderer/views/util';
@@ -23,10 +22,10 @@ import AppUpdater from '../libs/AppUpdater';
 import ReactBrowserWindow from '../libs/ReactBrowserWindow';
 import DB from '../libs/DB';
 import ScheduleTimer from '../libs/ScheduleTimer';
+import store from '../libs/ElectronStore';
 
 const { screen } = require('electron');
 
-const store = new Store();
 const scheduleTimer = ScheduleTimer.getInstance();
 
 Preference.init();
@@ -163,7 +162,7 @@ const createWindow = async () => {
     width,
     height,
     enableLargerThanScreen: true,
-    autoHideMenuBar: false,
+    autoHideMenuBar: true,
   });
   mainWindow = reactBrowserWindow.browserWindow;
   mainWindow?.webContents.on('did-finish-load', () => {
@@ -177,8 +176,10 @@ const createWindow = async () => {
 };
 
 const init = async () => {
+  if (process.platform === 'darwin') {
+    app.dock.setIcon(getAssetPath('icon.png'));
+  }
   await createWindow();
-
   const count = DB('schedule').count();
   if (count > 0) {
     if (store.has(CURRENT_ID)) {

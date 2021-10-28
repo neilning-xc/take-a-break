@@ -1,13 +1,13 @@
 <div align="center">
 
-![test](https://github.com/neilning-xc/take-a-break/actions/workflows/test.yml/badge.svg) 
+![test](https://github.com/neilning-xc/take-a-break/actions/workflows/test.yml/badge.svg)
 ![publish](https://github.com/neilning-xc/take-a-break/actions/workflows/publish.yml/badge.svg)
 
 </div>
 
 # Take a break
 
-This application remind people to have a break.
+An application remind people to have a break after hours hard working on MacOS.
 It takes advantage of [Electron React Boilerplate](https://electron-react-boilerplate.js.org/) as the code skeleton.
 
 ## Screenshots
@@ -15,6 +15,10 @@ It takes advantage of [Electron React Boilerplate](https://electron-react-boiler
 ![screen1.png](screen1.png)
 
 ![screen2.png](screen2.png)
+
+## Installation
+
+Go to [release page](https://github.com/neilning-xc/take-a-break/releases) to install latest application, or package it from source code if you would like to.
 
 ## Starting Development
 
@@ -36,4 +40,4 @@ Neil Ning: ningcorder@foxmail.com
 
 ## License
 
-MIT © [Take A Break](https://github.com/electron-react-boilerplate)
+MIT © [Take a break](https://github.com/neilning-xc/take-a-break)

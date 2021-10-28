@@ -1,9 +1,8 @@
 import { app, powerMonitor } from 'electron';
-import Store from 'electron-store';
 import { PREFERENCE, STATUS } from '../constants';
 import ScheduleTimer from './ScheduleTimer';
+import store from './ElectronStore';
 
-const store = new Store();
 if (!store.has(PREFERENCE)) {
   store.set(PREFERENCE, {
     skipScreenSaver: true,
