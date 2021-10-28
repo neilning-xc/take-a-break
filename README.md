@@ -10,6 +10,12 @@
 This application remind people to have a break.
 It takes advantage of [Electron React Boilerplate](https://electron-react-boilerplate.js.org/) as the code skeleton.
 
+## Screenshots
+
+![screen1.png](screen1.png)
+
+![screen2.png](screen2.png)
+
 ## Starting Development
 
 Start the app in the `dev` environment:
