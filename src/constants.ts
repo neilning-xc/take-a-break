@@ -7,3 +7,4 @@ export enum STATUS {
 }
 
 export const CURRENT_ID = 'currentId';
+export const PREFERENCE = 'preference';

@@ -40,3 +40,8 @@ export const installExtensions = async () => {
     )
     .catch(console.log);
 };
+
+// 获取当时时间戳
+export const getTimestamp = () => {
+  return Math.floor(new Date().getTime() / 1000);
+};

@@ -5,9 +5,12 @@ import React, { useState, useEffect } from 'react';
 import { Link, Switch, Route } from 'react-router-dom';
 import '../style/App.global.scss';
 import classNames from 'classnames';
-import { Divider } from 'antd';
+import { Divider, Menu } from 'antd';
+import { SettingOutlined } from '@ant-design/icons';
 import ScheduleForm from '../components/ScheduleForm';
 import MenuItem from '../components/MenuItem';
+import Exclude from './Exclude';
+import Preference from './Preference';
 
 const { ipcRenderer } = electron;
 
@@ -73,7 +76,7 @@ const Setting: React.FunctionComponent = () => {
         <div className="title">
           <h3 className="label">预约计划</h3>
           <button>
-            <Link to="/setting/add-setting">添加</Link>
+            <Link to="/setting/add-schedule">添加</Link>
           </button>
         </div>
 
@@ -99,11 +102,25 @@ const Setting: React.FunctionComponent = () => {
             );
           })}
         </ul>
+        <Menu mode="inline" className="custom-menu">
+          {/* <Menu.Item key="exclude" icon={<CloseCircleOutlined />}>
+            <Link to="/setting/exclude">例外程序</Link>
+          </Menu.Item> */}
+          <Menu.Item key="preference" icon={<SettingOutlined />}>
+            <Link to="/setting/preference">设置</Link>
+          </Menu.Item>
+        </Menu>
       </div>
 
       <div className="content">
         <Switch>
-          <Route path="/setting/add-setting">
+          <Route path="/setting/preference">
+            <Preference />
+          </Route>
+          <Route path="/setting/exclude">
+            <Exclude />
+          </Route>
+          <Route path="/setting/add-schedule">
             <ScheduleForm data={getEmpty()} />
           </Route>
           <Route path="/setting/:id">

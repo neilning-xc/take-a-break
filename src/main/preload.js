@@ -11,6 +11,9 @@ contextBridge.exposeInMainWorld('electron', {
     removeConfig(id) {
       ipcRenderer.send('removeConfig', id);
     },
+    savePreference(data) {
+      return ipcRenderer.send('savePreference', data);
+    },
     pauseSchedule() {
       ipcRenderer.send('pauseSchedule');
     },
@@ -34,6 +37,9 @@ contextBridge.exposeInMainWorld('electron', {
     },
     getCurrentId() {
       return ipcRenderer.sendSync('getCurrentId');
+    },
+    getPreference() {
+      return ipcRenderer.sendSync('getPreference');
     },
     getStatus() {
       return ipcRenderer.sendSync('getStatus');

@@ -2,7 +2,7 @@
 import StoreAdaptor from './StoreAdaptor';
 import Table, { IncrementTable } from './Table';
 
-const instanceMap: Record<string, any> = {};
+const instanceMap: Record<string, Table<IncrementTable>> = {};
 
 /**
  * 数据库工厂方法
