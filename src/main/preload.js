@@ -32,6 +32,9 @@ contextBridge.exposeInMainWorld('electron', {
     startSchedule(id) {
       ipcRenderer.send('startSchedule', id);
     },
+    break(id) {
+      ipcRenderer.send('break', id);
+    },
     getSchedules() {
       return ipcRenderer.sendSync('getSchedules');
     },

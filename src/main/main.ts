@@ -122,6 +122,7 @@ scheduleTimer.on('working', (status) => {
  */
 const disableSchedule = () => {
   scheduleTimer.disable();
+  store.set(CURRENT_ID, 0);
   ReactBrowserWindow.send('updateCurrentId', 0);
 };
 
@@ -253,6 +254,11 @@ ipcMain.on('pauseSchedule', () => {
  */
 ipcMain.on('resumeSchedule', () => {
   scheduleTimer.resume();
+});
+
+ipcMain.on('break', () => {
+  scheduleTimer.break();
+  showOverlay();
 });
 
 /**

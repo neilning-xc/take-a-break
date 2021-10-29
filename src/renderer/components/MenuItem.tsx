@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable react/prop-types */
 import React, { useEffect, useState } from 'react';
 import { Badge, Button, Dropdown, Menu } from 'antd';
@@ -9,6 +11,7 @@ import {
   PauseCircleFilled,
   CheckCircleFilled,
   StopFilled,
+  ClockCircleFilled,
 } from '@ant-design/icons';
 import { STATUS } from '../../constants';
 import { formatTime } from '../views/util';
@@ -51,8 +54,23 @@ const MenuItem: React.FunctionComponent<ItemProp> = ({ data, currentId }) => {
     setStatus(status);
   };
 
+  const handleBreakClick = () => {
+    ipcRenderer.break();
+    const status = ipcRenderer.getStatus();
+    setStatus(status);
+  };
+
+  const handleMenuClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    event.preventDefault();
+  };
+
   const menu = (
     <Menu>
+      <Menu.Item icon={<ClockCircleFilled />} onClick={handleBreakClick}>
+        休息
+      </Menu.Item>
+
       <Menu.Item icon={<DeleteFilled />} onClick={handleRemoveClick}>
         删除
       </Menu.Item>
@@ -72,7 +90,7 @@ const MenuItem: React.FunctionComponent<ItemProp> = ({ data, currentId }) => {
   );
 
   return (
-    <div className="menu-item">
+    <div className="menu-item" onClick={handleMenuClick}>
       <Badge
         offset={[0, 4]}
         count={<ClockCircleOutlined style={{ color: '#108ee9' }} />}
