@@ -67,22 +67,31 @@ const MenuItem: React.FunctionComponent<ItemProp> = ({ data, currentId }) => {
 
   const menu = (
     <Menu>
-      <Menu.Item icon={<ClockCircleFilled />} onClick={handleBreakClick}>
+      <Menu.Item
+        key={1}
+        icon={<ClockCircleFilled />}
+        onClick={handleBreakClick}
+      >
         休息
       </Menu.Item>
-
-      <Menu.Item icon={<DeleteFilled />} onClick={handleRemoveClick}>
+      <Menu.Item key={2} icon={<DeleteFilled />} onClick={handleRemoveClick}>
         删除
       </Menu.Item>
-
       {globalStatus === STATUS.paused && (
-        <Menu.Item icon={<CheckCircleFilled />} onClick={handleResumeClick}>
+        <Menu.Item
+          key={3}
+          icon={<CheckCircleFilled />}
+          onClick={handleResumeClick}
+        >
           恢复
         </Menu.Item>
       )}
-
       {globalStatus === STATUS.working && (
-        <Menu.Item icon={<PauseCircleFilled />} onClick={handlePauseClick}>
+        <Menu.Item
+          key={4}
+          icon={<PauseCircleFilled />}
+          onClick={handlePauseClick}
+        >
           暂停
         </Menu.Item>
       )}
