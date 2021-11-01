@@ -1,10 +1,9 @@
-/* eslint-disable import/prefer-default-export */
-import ps from 'ps-node';
+import ps from 'neil-ps-node';
 
 export const getProcess = (processName: string): Promise<ps.Program[]> => {
   return new Promise((resolve, reject) => {
     ps.lookup(
-      { command: processName },
+      { command: processName, keywords: ['stat'] },
       (err: Error, processList: ps.Program[]) => {
         if (!err) {
           resolve(processList);
@@ -15,11 +14,40 @@ export const getProcess = (processName: string): Promise<ps.Program[]> => {
   });
 };
 
-export const checkProcessList = (processList: string[]): Promise<boolean> => {
-  const promiseList = processList.map((proceName) => getProcess(proceName));
+const pausedProcess = [
+  {
+    program: '/Applications/WeChat.app/Contents/MacOS/WeChat',
+    stat: 'S',
+  },
+  {
+    program:
+      '/System/Applications/QuickTime Player.app/Contents/MacOS/QuickTime Player',
+    stat: 'S',
+  },
+  {
+    program: '/System/Applications/FaceTime.app/Contents/MacOS/FaceTime',
+    stat: 'S',
+  },
+];
+
+export const checkSpecificProcess = () => {
+  const promiseList = pausedProcess.map((proceName) =>
+    getProcess(proceName.program)
+  );
   return Promise.race(promiseList).then(
-    () => {
-      return true;
+    (processList: ps.Program[]) => {
+      let flag = false;
+      // eslint-disable-next-line no-restricted-syntax
+      for (const process of processList) {
+        const matchProgram = pausedProcess.find((item) =>
+          process.command.includes(item.program)
+        );
+        if (matchProgram?.stat === process.stat) {
+          flag = true;
+          break;
+        }
+      }
+      return flag;
     },
     () => {
       return false;
@@ -27,12 +55,7 @@ export const checkProcessList = (processList: string[]): Promise<boolean> => {
   );
 };
 
-const pausedProcess = [
-  '/Applications/WeChat.app/Contents/MacOS/WeChat',
-  '/System/Applications/QuickTime Player.app/Contents/MacOS/QuickTime Player',
-  '/System/Applications/FaceTime.app/Contents/MacOS/FaceTime',
-];
-
-export const checkSpecificProcess = () => {
-  return checkProcessList(pausedProcess);
-};
+(async () => {
+  const flag = await checkSpecificProcess();
+  console.log(flag);
+})();

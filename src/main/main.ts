@@ -64,6 +64,7 @@ const showOverlay = () => {
   mainWindow?.setAlwaysOnTop(true, 'screen-saver');
 
   const displays = screen.getAllDisplays();
+  console.log(displays);
   for (let i = 0; i < displays.length; i++) {
     if (displays[i].bounds.x !== 0 || displays[i].bounds.y !== 0) {
       const { x, y } = displays[i].bounds;
