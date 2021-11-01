@@ -202,7 +202,7 @@ const init = async () => {
   await createWindow();
   const count = DB('schedule').count();
   if (count > 0) {
-    if (store.has(CURRENT_ID)) {
+    if (store.has(CURRENT_ID) && store.get(CURRENT_ID) !== 0) {
       setupTimeoutById(<number>store.get(CURRENT_ID));
     } else {
       const firstSchedule = DB('schedule').first();

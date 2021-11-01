@@ -61,7 +61,6 @@ const MenuItem: React.FunctionComponent<ItemProp> = ({ data, currentId }) => {
   };
 
   const handleMenuClick = (event: React.MouseEvent) => {
-    event.stopPropagation();
     event.preventDefault();
   };
 
@@ -99,7 +98,7 @@ const MenuItem: React.FunctionComponent<ItemProp> = ({ data, currentId }) => {
   );
 
   return (
-    <div className="menu-item" onClick={handleMenuClick}>
+    <div className="menu-item">
       <Badge
         offset={[0, 4]}
         count={<ClockCircleOutlined style={{ color: '#108ee9' }} />}
@@ -115,7 +114,7 @@ const MenuItem: React.FunctionComponent<ItemProp> = ({ data, currentId }) => {
           <strong>{formatTime(data.workTime)}</strong>
         </div>
       </div>
-      <div className="action">
+      <div className="action" onClick={handleMenuClick}>
         {currentId === data.id ? (
           <Button
             size="small"
