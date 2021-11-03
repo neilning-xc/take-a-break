@@ -76,6 +76,8 @@ const showOverlay = () => {
         height,
         pathname: '#/?external',
       });
+      window?.setOpacity(0.2);
+      window?.setAlwaysOnTop(true, 'screen-saver');
       window?.show();
       externalWindows.push(<BrowserWindow>window);
     }
