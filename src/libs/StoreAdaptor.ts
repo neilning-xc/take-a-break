@@ -2,7 +2,7 @@
 import ElectronStore from 'electron-store';
 import Table, { IncrementTable, RawTableStruct } from './Table';
 
-const Store = require('electron-store');
+import store from './ElectronStore';
 
 /**
  * electron-store的数据库实现类
@@ -28,8 +28,7 @@ export default class StoreAdaptor<T extends IncrementTable>
   private tableName = '';
 
   constructor(tableName: string) {
-    // TODO: db应该是单例模式，存储在全局对象中
-    this.db = StoreAdaptor.instanceDB();
+    this.db = store;
     this.table(tableName);
   }
 
@@ -41,12 +40,6 @@ export default class StoreAdaptor<T extends IncrementTable>
       data: this.records,
       autoIncrement: this.increment,
     });
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  private static instanceDB() {
-    const store = new Store();
-    return store;
   }
 
   public update(record: T): T {

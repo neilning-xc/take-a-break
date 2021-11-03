@@ -1,5 +1,5 @@
 /* eslint-disable import/prefer-default-export */
-import ps from 'ps-node';
+import ps from 'neil-ps-node';
 
 export const getProcess = (processName: string): Promise<ps.Program[]> => {
   return new Promise((resolve, reject) => {

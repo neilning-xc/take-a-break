@@ -5,8 +5,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, Switch, Route } from 'react-router-dom';
 import '../style/App.global.scss';
 import classNames from 'classnames';
-import { Divider, Menu } from 'antd';
-import { SettingOutlined } from '@ant-design/icons';
+import { Button, Divider, Menu } from 'antd';
+import { SettingOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import ScheduleForm from '../components/ScheduleForm';
 import MenuItem from '../components/MenuItem';
 import Exclude from './Exclude';
@@ -75,9 +75,16 @@ const Setting: React.FunctionComponent = () => {
       <div className="left-menu">
         <div className="title">
           <h3 className="label">预约计划</h3>
-          <button>
-            <Link to="/setting/add-schedule">添加</Link>
-          </button>
+          <Link to="/setting/add-schedule">
+            <Button
+              type="primary"
+              size="small"
+              ghost
+              icon={<PlusCircleOutlined />}
+            >
+              添加
+            </Button>
+          </Link>
         </div>
 
         <ul>

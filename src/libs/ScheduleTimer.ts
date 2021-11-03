@@ -100,10 +100,23 @@ class ScheduleTimer extends EventEmitter {
     }
   }
 
+  /**
+   * 禁用当前schedule
+   */
   public disable() {
     if (this.globalTimer) {
       clearInterval(this.globalTimer);
       this.globalTimer = null;
+    }
+  }
+
+  /**
+   *  强制进入休息
+   */
+  public break() {
+    if (this.globalStatus === STATUS.working) {
+      this.globalStatus = STATUS.breaking;
+      this.startTime = getTimestamp();
     }
   }
 

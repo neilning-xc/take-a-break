@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable react/prop-types */
 import React, { useEffect, useState } from 'react';
 import { Badge, Button, Dropdown, Menu } from 'antd';
@@ -9,6 +11,7 @@ import {
   PauseCircleFilled,
   CheckCircleFilled,
   StopFilled,
+  ClockCircleFilled,
 } from '@ant-design/icons';
 import { STATUS } from '../../constants';
 import { formatTime } from '../views/util';
@@ -51,20 +54,43 @@ const MenuItem: React.FunctionComponent<ItemProp> = ({ data, currentId }) => {
     setStatus(status);
   };
 
+  const handleBreakClick = () => {
+    ipcRenderer.break();
+    const status = ipcRenderer.getStatus();
+    setStatus(status);
+  };
+
+  const handleMenuClick = (event: React.MouseEvent) => {
+    event.preventDefault();
+  };
+
   const menu = (
     <Menu>
-      <Menu.Item icon={<DeleteFilled />} onClick={handleRemoveClick}>
+      <Menu.Item
+        key={1}
+        icon={<ClockCircleFilled />}
+        onClick={handleBreakClick}
+      >
+        休息
+      </Menu.Item>
+      <Menu.Item key={2} icon={<DeleteFilled />} onClick={handleRemoveClick}>
         删除
       </Menu.Item>
-
       {globalStatus === STATUS.paused && (
-        <Menu.Item icon={<CheckCircleFilled />} onClick={handleResumeClick}>
+        <Menu.Item
+          key={3}
+          icon={<CheckCircleFilled />}
+          onClick={handleResumeClick}
+        >
           恢复
         </Menu.Item>
       )}
-
       {globalStatus === STATUS.working && (
-        <Menu.Item icon={<PauseCircleFilled />} onClick={handlePauseClick}>
+        <Menu.Item
+          key={4}
+          icon={<PauseCircleFilled />}
+          onClick={handlePauseClick}
+        >
           暂停
         </Menu.Item>
       )}
@@ -88,7 +114,7 @@ const MenuItem: React.FunctionComponent<ItemProp> = ({ data, currentId }) => {
           <strong>{formatTime(data.workTime)}</strong>
         </div>
       </div>
-      <div className="action">
+      <div className="action" onClick={handleMenuClick}>
         {currentId === data.id ? (
           <Button
             size="small"

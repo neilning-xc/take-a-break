@@ -1,19 +1,10 @@
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable promise/always-return */
 /* eslint global-require: off, no-console: off */
-
-/**
- * This module executes inside of electron's main process. You can start
- * electron renderer process from here and communicate with the other processes
- * through IPC.
- *
- * When running `yarn build` or `yarn build:main`, this file is compiled to
- * `./src/main.js` using webpack. This gives us some performance wins.
- */
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import { app, BrowserWindow, Menu, Tray, ipcMain } from 'electron';
 import { IpcMainEvent } from 'electron/main';
-import Store from 'electron-store';
 import * as Preference from '../libs/Preference';
 import { getAssetPath } from './util';
 import { formatTime } from '../renderer/views/util';
@@ -23,10 +14,10 @@ import AppUpdater from '../libs/AppUpdater';
 import ReactBrowserWindow from '../libs/ReactBrowserWindow';
 import DB from '../libs/DB';
 import ScheduleTimer from '../libs/ScheduleTimer';
+import store from '../libs/ElectronStore';
 
 const { screen } = require('electron');
 
-const store = new Store();
 const scheduleTimer = ScheduleTimer.getInstance();
 
 Preference.init();
@@ -37,6 +28,7 @@ const isDevelopment =
 let tray: Tray | null = null;
 let mainWindow: BrowserWindow | null = null;
 let childWindow: BrowserWindow | null = null;
+const externalWindows: BrowserWindow[] = [];
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -46,9 +38,22 @@ if (isDevelopment) {
   require('electron-debug')();
 }
 
+const mainOption = {
+  frame: false,
+  resizable: false,
+  movable: false,
+  transparent: true,
+  backgroundColor: '#80000000',
+  enableLargerThanScreen: true,
+  autoHideMenuBar: true,
+};
+
 const hideOverlay = () => {
   mainWindow?.hide();
   childWindow?.hide();
+  for (const window of externalWindows) {
+    window?.hide();
+  }
 };
 
 const showOverlay = () => {
@@ -57,6 +62,26 @@ const showOverlay = () => {
   mainWindow?.setPosition(0, 0, false);
   mainWindow?.setOpacity(0.2);
   mainWindow?.setAlwaysOnTop(true, 'screen-saver');
+
+  const displays = screen.getAllDisplays();
+  for (let i = 0; i < displays.length; i++) {
+    if (displays[i].bounds.x !== 0 || displays[i].bounds.y !== 0) {
+      const { x, y } = displays[i].bounds;
+      const { width, height } = displays[i].size;
+      const { browserWindow: window } = ReactBrowserWindow.CreateWindow({
+        ...mainOption,
+        x,
+        y,
+        width,
+        height,
+        pathname: '#/?external',
+      });
+      window?.setOpacity(0.2);
+      window?.setAlwaysOnTop(true, 'screen-saver');
+      window?.show();
+      externalWindows.push(<BrowserWindow>window);
+    }
+  }
 
   if (mainWindow) {
     const primaryDisplay = screen.getPrimaryDisplay();
@@ -96,6 +121,9 @@ const showOverlay = () => {
       const opacity = mainWindow.getOpacity();
       if (opacity < 0.8) {
         mainWindow.setOpacity(opacity + 0.02);
+        for (const win of externalWindows) {
+          win.setOpacity(opacity + 0.02);
+        }
       } else {
         clearInterval(opacityInterval);
       }
@@ -123,6 +151,7 @@ scheduleTimer.on('working', (status) => {
  */
 const disableSchedule = () => {
   scheduleTimer.disable();
+  store.set(CURRENT_ID, 0);
   ReactBrowserWindow.send('updateCurrentId', 0);
 };
 
@@ -147,23 +176,15 @@ const setupTimeoutById = (id: number) => {
 };
 
 const createWindow = async () => {
-  // Remove this if your app does not use auto updates
   // eslint-disable-next-line no-new
   new AppUpdater();
 
-  // Create a window that fills the screen's available work area.
   const primaryDisplay = screen.getPrimaryDisplay();
   const { width, height } = primaryDisplay.size;
   const reactBrowserWindow = ReactBrowserWindow.CreateWindow({
-    frame: false,
-    resizable: false,
-    movable: false,
-    transparent: true,
-    backgroundColor: '#80000000',
+    ...mainOption,
     width,
     height,
-    enableLargerThanScreen: true,
-    autoHideMenuBar: false,
   });
   mainWindow = reactBrowserWindow.browserWindow;
   mainWindow?.webContents.on('did-finish-load', () => {
@@ -177,11 +198,13 @@ const createWindow = async () => {
 };
 
 const init = async () => {
+  if (process.platform === 'darwin') {
+    app.dock.setIcon(getAssetPath('icon.png'));
+  }
   await createWindow();
-
   const count = DB('schedule').count();
   if (count > 0) {
-    if (store.has(CURRENT_ID)) {
+    if (store.has(CURRENT_ID) && store.get(CURRENT_ID) !== 0) {
       setupTimeoutById(<number>store.get(CURRENT_ID));
     } else {
       const firstSchedule = DB('schedule').first();
@@ -252,6 +275,11 @@ ipcMain.on('pauseSchedule', () => {
  */
 ipcMain.on('resumeSchedule', () => {
   scheduleTimer.resume();
+});
+
+ipcMain.on('break', () => {
+  scheduleTimer.break();
+  showOverlay();
 });
 
 /**

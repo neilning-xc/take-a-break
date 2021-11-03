@@ -13,10 +13,10 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import { BrowserWindow, ipcMain, IpcMainEvent, dialog } from 'electron';
-import Store from 'electron-store';
 import ReactBrowserWindow from '../libs/ReactBrowserWindow';
 import DB from '../libs/DB';
 import { CURRENT_ID, PREFERENCE } from '../constants';
+import store from '../libs/ElectronStore';
 
 let settingWindow: BrowserWindow | null = null;
 
@@ -30,6 +30,7 @@ const createSettingWindow: () => Promise<BrowserWindow | null> = async () => {
     width: 800,
     height: 600,
     pathname: '#/setting/preference',
+    autoHideMenuBar: false,
   });
 
   settingWindow = reactBrowserWindow.browserWindow;
@@ -91,7 +92,7 @@ ipcMain.on('addConfig', (_: IpcMainEvent, schedule: Schedule) => {
 });
 
 ipcMain.on('savePreference', (_: IpcMainEvent, preference: IPreference) => {
-  new Store().set(PREFERENCE, preference);
+  store.set(PREFERENCE, preference);
 });
 
 /////////////////////////////////////////
@@ -103,12 +104,12 @@ ipcMain.on('getSchedules', (event: IpcMainEvent) => {
 });
 
 ipcMain.on('getCurrentId', (event: IpcMainEvent) => {
-  const currentId = new Store().get(CURRENT_ID);
+  const currentId = store.get(CURRENT_ID);
   event.returnValue = currentId;
 });
 
 ipcMain.on('getPreference', (event: IpcMainEvent) => {
-  const preference = new Store().get(PREFERENCE);
+  const preference = store.get(PREFERENCE);
   event.returnValue = preference;
 });
 
