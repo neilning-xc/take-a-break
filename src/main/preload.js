@@ -47,6 +47,9 @@ contextBridge.exposeInMainWorld('electron', {
     getStatus() {
       return ipcRenderer.sendSync('getStatus');
     },
+    getExcludes() {
+      return ipcRenderer.sendSync('getExcludes');
+    },
     on(channel, func) {
       const validChannels = [
         'countdown',

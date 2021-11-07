@@ -6,7 +6,11 @@ import { Link, Switch, Route } from 'react-router-dom';
 import '../style/App.global.scss';
 import classNames from 'classnames';
 import { Button, Divider, Menu } from 'antd';
-import { SettingOutlined, PlusCircleOutlined } from '@ant-design/icons';
+import {
+  SettingOutlined,
+  PlusCircleOutlined,
+  CloseCircleOutlined,
+} from '@ant-design/icons';
 import ScheduleForm from '../components/ScheduleForm';
 import MenuItem from '../components/MenuItem';
 import Exclude from './Exclude';
@@ -110,11 +114,11 @@ const Setting: React.FunctionComponent = () => {
           })}
         </ul>
         <Menu mode="inline" className="custom-menu">
-          {/* <Menu.Item key="exclude" icon={<CloseCircleOutlined />}>
-            <Link to="/setting/exclude">例外程序</Link>
-          </Menu.Item> */}
           <Menu.Item key="preference" icon={<SettingOutlined />}>
             <Link to="/setting/preference">设置</Link>
+          </Menu.Item>
+          <Menu.Item key="exclude" icon={<CloseCircleOutlined />}>
+            <Link to="/setting/exclude">例外程序</Link>
           </Menu.Item>
         </Menu>
       </div>

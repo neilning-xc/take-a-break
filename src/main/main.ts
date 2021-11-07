@@ -3,7 +3,7 @@
 /* eslint global-require: off, no-console: off */
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
-import { app, BrowserWindow, Menu, Tray, ipcMain } from 'electron';
+import { app, BrowserWindow, Menu, Tray, ipcMain, screen } from 'electron';
 import { IpcMainEvent } from 'electron/main';
 import * as Preference from '../libs/Preference';
 import { getAssetPath } from './util';
@@ -16,10 +16,10 @@ import DB from '../libs/DB';
 import ScheduleTimer from '../libs/ScheduleTimer';
 import store from '../libs/ElectronStore';
 
-const { screen } = require('electron');
-
+// 获取schedule线程实例
 const scheduleTimer = ScheduleTimer.getInstance();
 
+// 初始化用户配置
 Preference.init();
 
 const isDevelopment =
