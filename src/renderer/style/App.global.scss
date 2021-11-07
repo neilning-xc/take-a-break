@@ -95,7 +95,7 @@ button.neu-button {
   }
 
   .left-menu {
-    flex: 0 320px;
+    flex: 0 0 280px;
     overflow: hidden;
     border-right: 1px solid #a9a9a9;
 
@@ -133,7 +133,7 @@ button.neu-button {
     }
 
     .schedule-info {
-      flex: 0 0 200px;
+      flex: 0 0 160px;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -185,4 +185,16 @@ button.neu-button {
 
 .exclude {
   padding: 50px;
+}
+
+.exclude-title {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.exclude-item {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

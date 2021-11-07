@@ -35,6 +35,12 @@ contextBridge.exposeInMainWorld('electron', {
     break(id) {
       ipcRenderer.send('break', id);
     },
+    openExcludeDialog() {
+      ipcRenderer.send('openExcludeDialog');
+    },
+    updateExcludes(data) {
+      ipcRenderer.send('updateExcludes', data);
+    },
     getSchedules() {
       return ipcRenderer.sendSync('getSchedules');
     },
@@ -56,6 +62,7 @@ contextBridge.exposeInMainWorld('electron', {
         'status',
         'updateSchedules',
         'updateCurrentId',
+        'selectedExcludeFile',
       ];
       if (validChannels.includes(channel)) {
         // Deliberately strip event as it includes `sender`

@@ -29,7 +29,7 @@ interface IPreference {
 
 interface IExclude {
   name: string;
-  status: string;
+  status: number;
 }
 
 declare const electron: any;
