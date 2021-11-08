@@ -27,4 +27,9 @@ interface IPreference {
   loginStart: boolean;
 }
 
+interface IExclude {
+  name: string;
+  status: number;
+}
+
 declare const electron: any;

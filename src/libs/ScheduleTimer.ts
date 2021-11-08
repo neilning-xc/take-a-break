@@ -4,18 +4,34 @@ import { STATUS } from '../constants';
 
 type Timer = NodeJS.Timeout | null;
 
+/**
+ * 预约线程核心文件，该定时器支持禁用（disable），推迟(postpone)，暂停(pause)，恢复(resume)操作，
+ * 除了关闭状态，或通过调用disable方法会清除定时器之外，其他状态下，通过setInterval设置的全局定时器，一直处于运行状态。
+ * 定时器包含不同的状态，各个状态之间的转化图见document.md.
+ * 核心思路：每一个状态开始时都会记录下startTime，每一秒钟都要判断是否该进入下一个状态，
+ * 并计算当前阶段的剩余时间，并不断发送给render线程
+ */
 class ScheduleTimer extends EventEmitter {
   public globalTimer: Timer = null;
 
-  public globalStatus: STATUS;
+  private status: STATUS;
 
-  public startTime = 0; // 记录点击开始按钮时的时间
+  public startTime = 0; // 记录每一个状态的开始时间
 
   public pausedTime = 0; // 记录点击暂停按钮时的时间
 
   private constructor() {
     super();
-    this.globalStatus = STATUS.closed;
+    this.status = STATUS.closed;
+  }
+
+  get globalStatus(): STATUS {
+    return this.status;
+  }
+
+  set globalStatus(value: STATUS) {
+    this.status = value;
+    this.emit('status', this.status);
   }
 
   public start(params: Pick<Schedule, 'workTime' | 'breakTime' | 'delayTime'>) {

@@ -15,8 +15,9 @@ import 'regenerator-runtime/runtime';
 import { BrowserWindow, ipcMain, IpcMainEvent, dialog } from 'electron';
 import ReactBrowserWindow from '../libs/ReactBrowserWindow';
 import DB from '../libs/DB';
-import { CURRENT_ID, PREFERENCE } from '../constants';
+import { CURRENT_ID, EXCLUDES, PREFERENCE, PROCESS_STAT } from '../constants';
 import store from '../libs/ElectronStore';
+import '../libs/Process';
 
 let settingWindow: BrowserWindow | null = null;
 
@@ -95,6 +96,37 @@ ipcMain.on('savePreference', (_: IpcMainEvent, preference: IPreference) => {
   store.set(PREFERENCE, preference);
 });
 
+ipcMain.on('updateExcludes', (_: IpcMainEvent, excludes: IExclude[]) => {
+  store.set(EXCLUDES, excludes);
+});
+
+ipcMain.on('openExcludeDialog', async (event) => {
+  const file = await dialog.showOpenDialog(<BrowserWindow>settingWindow, {
+    properties: ['openFile'],
+  });
+
+  if (file?.filePaths.length) {
+    const selectedFile = file.filePaths[0];
+    const excludes = <IExclude[]>store.get(EXCLUDES);
+
+    const index = excludes.findIndex(
+      (exclude: IExclude) => exclude.name === selectedFile
+    );
+    if (index === -1) {
+      excludes.push({
+        name: selectedFile,
+        status: PROCESS_STAT.FOREGROUND,
+      });
+      store.set(EXCLUDES, excludes);
+      event.sender.send('selectedExcludeFile', file);
+    } else {
+      dialog.showMessageBox(settingWindow as BrowserWindow, {
+        message: '已经添加该程序',
+      });
+    }
+  }
+});
+
 /////////////////////////////////////////
 //         同步的主线程监听事件           //
 ////////////////////////////////////////
@@ -111,6 +143,11 @@ ipcMain.on('getCurrentId', (event: IpcMainEvent) => {
 ipcMain.on('getPreference', (event: IpcMainEvent) => {
   const preference = store.get(PREFERENCE);
   event.returnValue = preference;
+});
+
+ipcMain.on('getExcludes', (event: IpcMainEvent) => {
+  const excludes = store.get(EXCLUDES);
+  event.returnValue = excludes;
 });
 
 export default createSettingWindow;

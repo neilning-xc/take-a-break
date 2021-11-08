@@ -1,7 +1,7 @@
 {
   "name": "take-a-break",
   "productName": "Take a break",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Take a break after hours harding working",
   "main": "./dist/main/main.js",
   "author": {
