@@ -130,7 +130,10 @@ class ScheduleTimer extends EventEmitter {
    *  强制进入休息
    */
   public break() {
-    if (this.globalStatus === STATUS.working) {
+    if (
+      this.globalStatus === STATUS.working ||
+      this.globalStatus === STATUS.delaying
+    ) {
       this.globalStatus = STATUS.breaking;
       this.startTime = getTimestamp();
     }

@@ -12,9 +12,9 @@ It takes advantage of [Electron React Boilerplate](https://electron-react-boiler
 
 ## Screenshots
 
-![screen1.png](screenshots/screen1.png)
+![screen1.png](docs/screen1.png)
 
-![screen2.png](screenshots/screen2.png)
+![screen2.png](docs/screen2.png)
 
 ## Installation
 

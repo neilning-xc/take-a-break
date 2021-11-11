@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable react/prop-types */
 import React, { useEffect, useState } from 'react';
-import { Badge, Button, Dropdown, Menu } from 'antd';
+import { Button, Dropdown, Menu } from 'antd';
 import {
   ClockCircleOutlined,
   PlayCircleFilled,
@@ -66,16 +66,22 @@ const MenuItem: React.FunctionComponent<ItemProp> = ({ data, currentId }) => {
 
   const menu = (
     <Menu>
-      <Menu.Item
-        key={1}
-        icon={<ClockCircleFilled />}
-        onClick={handleBreakClick}
-      >
-        休息
-      </Menu.Item>
-      <Menu.Item key={2} icon={<DeleteFilled />} onClick={handleRemoveClick}>
-        删除
-      </Menu.Item>
+      {currentId === data.id && (
+        <Menu.Item
+          key={1}
+          icon={<ClockCircleFilled />}
+          onClick={handleBreakClick}
+        >
+          休息
+        </Menu.Item>
+      )}
+
+      {currentId !== data.id && (
+        <Menu.Item key={2} icon={<DeleteFilled />} onClick={handleRemoveClick}>
+          删除
+        </Menu.Item>
+      )}
+
       {globalStatus === STATUS.paused && (
         <Menu.Item
           key={3}
@@ -85,7 +91,7 @@ const MenuItem: React.FunctionComponent<ItemProp> = ({ data, currentId }) => {
           恢复
         </Menu.Item>
       )}
-      {globalStatus === STATUS.working && (
+      {globalStatus === STATUS.working && currentId === data.id && (
         <Menu.Item
           key={4}
           icon={<PauseCircleFilled />}
@@ -97,14 +103,16 @@ const MenuItem: React.FunctionComponent<ItemProp> = ({ data, currentId }) => {
     </Menu>
   );
 
+  const color = currentId === data.id ? '#108ee9' : '#989898';
+
   return (
     <div className="menu-item">
-      <Badge
-        offset={[0, 4]}
-        count={<ClockCircleOutlined style={{ color: '#108ee9' }} />}
+      <ClockCircleOutlined
+        spin={currentId === data.id}
+        style={{ color, marginTop: 4 }}
       />
       <div className="schedule-info">
-        <h4>{data.name ? data.name : '名称'}</h4>
+        <h4 style={{ color }}>{data.name ? data.name : '名称'}</h4>
         <div>
           <label>休息时间：</label>
           <strong>{formatTime(data.breakTime)}</strong>
@@ -112,6 +120,10 @@ const MenuItem: React.FunctionComponent<ItemProp> = ({ data, currentId }) => {
         <div>
           <label>工作时间：</label>
           <strong>{formatTime(data.workTime)}</strong>
+        </div>
+        <div>
+          <label>推迟时间：</label>
+          <strong>{formatTime(data.delayTime)}</strong>
         </div>
       </div>
       <div className="action" onClick={handleMenuClick}>
