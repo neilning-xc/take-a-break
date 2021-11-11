@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useState, useEffect } from 'react';
-import { Link, Switch, Route } from 'react-router-dom';
+import { Link, Switch, Route, useHistory } from 'react-router-dom';
 import '../style/App.global.scss';
 import classNames from 'classnames';
 import { Button, Divider, Menu } from 'antd';
@@ -33,6 +33,7 @@ const Setting: React.FunctionComponent = () => {
   const [currentId, updateCurrentId] = useState<number>(0);
   const [schedules, updateSchedules] = useState<Schedule[]>([]);
   const [currentRow, updateCurrent] = useState<Schedule>(getEmpty());
+  const history = useHistory();
 
   const handleMenuClick = (schedule: Schedule) => {
     updateCurrent(schedule);
@@ -91,7 +92,7 @@ const Setting: React.FunctionComponent = () => {
           </Link>
         </div>
 
-        <ul>
+        <ul className="schedule-list">
           {schedules.map((schedule: Schedule) => {
             return (
               <li
@@ -113,11 +114,16 @@ const Setting: React.FunctionComponent = () => {
             );
           })}
         </ul>
-        <Menu mode="inline" className="custom-menu">
-          <Menu.Item key="preference" icon={<SettingOutlined />}>
+        <Menu
+          mode="inline"
+          selectedKeys={[history.location.pathname]}
+          defaultSelectedKeys={['/setting/preference']}
+          className="custom-menu"
+        >
+          <Menu.Item key="/setting/preference" icon={<SettingOutlined />}>
             <Link to="/setting/preference">设置</Link>
           </Menu.Item>
-          <Menu.Item key="exclude" icon={<CloseCircleOutlined />}>
+          <Menu.Item key="/setting/exclude" icon={<CloseCircleOutlined />}>
             <Link to="/setting/exclude">例外程序</Link>
           </Menu.Item>
         </Menu>

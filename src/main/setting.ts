@@ -12,7 +12,7 @@
  */
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
-import { BrowserWindow, ipcMain, IpcMainEvent, dialog } from 'electron';
+import { BrowserWindow, ipcMain, IpcMainEvent, dialog, app } from 'electron';
 import ReactBrowserWindow from '../libs/ReactBrowserWindow';
 import DB from '../libs/DB';
 import { CURRENT_ID, EXCLUDES, PREFERENCE, PROCESS_STAT } from '../constants';
@@ -21,7 +21,7 @@ import '../libs/Process';
 
 let settingWindow: BrowserWindow | null = null;
 
-const createSettingWindow: () => Promise<BrowserWindow | null> = async () => {
+const createSettingWindow = () => {
   if (settingWindow !== null) {
     settingWindow?.show();
     settingWindow?.focus();
@@ -31,7 +31,9 @@ const createSettingWindow: () => Promise<BrowserWindow | null> = async () => {
     width: 800,
     height: 600,
     pathname: '#/setting/preference',
-    autoHideMenuBar: false,
+    fullscreenable: false,
+    maximizable: process.env.NODE_ENV !== 'production',
+    resizable: process.env.NODE_ENV !== 'production',
   });
 
   settingWindow = reactBrowserWindow.browserWindow;
@@ -41,11 +43,20 @@ const createSettingWindow: () => Promise<BrowserWindow | null> = async () => {
     }
     settingWindow?.show();
     settingWindow?.focus();
-
-    settingWindow?.webContents.send('setting');
   });
   settingWindow?.on('closed', () => {
     settingWindow = null;
+    // 开发环境时，为了便于调试，不隐藏dock图标
+    if (process.env.NODE_ENV === 'production') {
+      app.dock.hide();
+    }
+  });
+
+  settingWindow?.on('show', () => {
+    // 开发环境时，为了便于调试，不隐藏dock图标
+    if (process.env.NODE_ENV === 'production') {
+      app.dock.show();
+    }
   });
   return settingWindow;
 };
