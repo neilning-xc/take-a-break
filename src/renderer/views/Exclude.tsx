@@ -44,7 +44,7 @@ const Exclude: React.FunctionComponent = () => {
     ipcRenderer.updateExcludes(copyExcludes);
   };
 
-  const handleStateChange = (value, index) => {
+  const handleStateChange = (value: number, index: number) => {
     const copyExcludes = [...excludes];
     copyExcludes[index].status = value;
     setExcludes(copyExcludes);
