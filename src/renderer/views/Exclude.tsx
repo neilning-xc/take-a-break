@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, List, Button, Popconfirm, Tooltip } from 'antd';
+import { Typography, List, Button, Popconfirm, Tooltip, Select } from 'antd';
 import {
   PlusOutlined,
   CloseOutlined,
@@ -7,8 +7,10 @@ import {
   QuestionOutlined,
 } from '@ant-design/icons';
 import '../style/App.global.scss';
+import { PROCESS_STAT } from '../../constants';
 
 const { Title } = Typography;
+const { Option } = Select;
 
 const { ipcRenderer } = electron;
 
@@ -42,6 +44,13 @@ const Exclude: React.FunctionComponent = () => {
     ipcRenderer.updateExcludes(copyExcludes);
   };
 
+  const handleStateChange = (value, index) => {
+    const copyExcludes = [...excludes];
+    copyExcludes[index].status = value;
+    setExcludes(copyExcludes);
+    ipcRenderer.updateExcludes(copyExcludes);
+  };
+
   return (
     <div className="exclude">
       <div className="exclude-title">
@@ -66,20 +75,31 @@ const Exclude: React.FunctionComponent = () => {
             <Typography.Text className="exclude-item">
               {item.name}
             </Typography.Text>
-            <Popconfirm
-              onConfirm={() => handleRemoveClick(index)}
-              okText="确认"
-              cancelText="取消"
-              title="确认删除？"
-              icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
-            >
-              <Button
-                type="text"
-                shape="circle"
-                icon={<CloseOutlined />}
+            <div>
+              <Select
+                style={{ width: 95 }}
                 size="small"
-              />
-            </Popconfirm>
+                value={item.status}
+                onChange={(value) => handleStateChange(value, index)}
+              >
+                <Option value={PROCESS_STAT.OPEN}>运行时</Option>
+                <Option value={PROCESS_STAT.FOREGROUND}>前台运行</Option>
+              </Select>
+              <Popconfirm
+                onConfirm={() => handleRemoveClick(index)}
+                okText="确认"
+                cancelText="取消"
+                title="确认删除？"
+                icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+              >
+                <Button
+                  type="text"
+                  shape="circle"
+                  icon={<CloseOutlined />}
+                  size="small"
+                />
+              </Popconfirm>
+            </div>
           </List.Item>
         )}
       />
