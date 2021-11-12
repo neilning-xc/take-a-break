@@ -16,6 +16,8 @@ It takes advantage of [Electron React Boilerplate](https://electron-react-boiler
 
 ![screen2.png](docs/screen2.png)
 
+![screen3.png](docs/screen3.png)
+
 ## Installation
 
 Go to [release page](https://github.com/neilning-xc/take-a-break/releases) to install latest application, or package it from source code if you would like to.
