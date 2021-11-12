@@ -170,7 +170,7 @@ button.neu-button {
   }
 
   .preference {
-    padding: 60px;
+    padding: 40px;
     display: flex;
     align-items: flex-start;
     flex-direction: column;
@@ -186,7 +186,7 @@ button.neu-button {
 }
 
 .exclude {
-  padding: 50px;
+  padding: 40px;
 }
 
 .exclude-title {
@@ -199,4 +199,8 @@ button.neu-button {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.exclude-action {
+  flex: 0 0 auto;
 }

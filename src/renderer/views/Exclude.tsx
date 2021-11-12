@@ -71,18 +71,18 @@ const Exclude: React.FunctionComponent = () => {
         bordered
         dataSource={excludes}
         renderItem={(item, index) => (
-          <List.Item>
+          <List.Item className="">
             <Typography.Text className="exclude-item">
               {item.name}
             </Typography.Text>
-            <div>
+            <div className="exclude-action">
               <Select
                 style={{ width: 95 }}
                 size="small"
                 value={item.status}
                 onChange={(value) => handleStateChange(value, index)}
               >
-                <Option value={PROCESS_STAT.OPEN}>运行时</Option>
+                <Option value={PROCESS_STAT.OPEN}>打开时</Option>
                 <Option value={PROCESS_STAT.FOREGROUND}>前台运行</Option>
               </Select>
               <Popconfirm
