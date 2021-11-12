@@ -59,32 +59,23 @@ const showOverlay = () => {
 
   const displays = screen.getAllDisplays();
 
-  // 避免重复创建窗口
-  if (displays.length !== externalWindows.length) {
-    for (let i = 0; i < displays.length; i++) {
-      if (displays[i].bounds.x !== 0 || displays[i].bounds.y !== 0) {
-        const { x, y } = displays[i].bounds;
-        const { width, height } = displays[i].size;
-        const { browserWindow: window } = ReactBrowserWindow.CreateWindow({
-          ...mainOption,
-          x,
-          y,
-          width,
-          height,
-          pathname: '#/?external',
-          opacity: 0.2,
-        });
-        window?.setAlwaysOnTop(true, 'screen-saver');
-        window?.show();
-        externalWindows.push(<BrowserWindow>window);
-      }
-    }
-  } else {
-    for (const window of externalWindows) {
-      if (window && window.isDestroyed()) {
-        window?.setAlwaysOnTop(true, 'screen-saver');
-        window?.show();
-      }
+  // TODO 重复创建window？是否有性能问题？
+  for (let i = 0; i < displays.length; i++) {
+    if (displays[i].bounds.x !== 0 || displays[i].bounds.y !== 0) {
+      const { x, y } = displays[i].bounds;
+      const { width, height } = displays[i].size;
+      const { browserWindow: window } = ReactBrowserWindow.CreateWindow({
+        ...mainOption,
+        x,
+        y,
+        width,
+        height,
+        pathname: '#/?external',
+        opacity: 0.2,
+      });
+      window?.setAlwaysOnTop(true, 'screen-saver');
+      window?.show();
+      externalWindows.push(<BrowserWindow>window);
     }
   }
 
