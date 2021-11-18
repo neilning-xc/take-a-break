@@ -37,14 +37,25 @@ export const getProcess = (processName: string): Promise<ps.Program[]> => {
   });
 };
 
-// TODO 当前只检查例外程序是否运行，后期添加运行状态：仅打开，或者前台运行时，
 export const checkExcludeList = async (
   processList: IExclude[]
 ): Promise<boolean> => {
   for (const proce of processList) {
     const results = await getProcess(proce.name);
     if (results.length) {
-      return true;
+      if (proce.status === PROCESS_STAT.FOREGROUND) {
+        // 判断该程序是否是前台运行
+        const isForeground = results.some((item: ps.Program) =>
+          (item.stat as string).includes('+')
+        );
+        if (isForeground) return true;
+      } else {
+        // 判断该程序是否打开状态
+        const isOpen = results.some((item: ps.Program) =>
+          (item.stat as string).includes('S')
+        );
+        if (isOpen) return true;
+      }
     }
   }
   return false;

@@ -6,6 +6,7 @@ type Timer = NodeJS.Timeout | null;
 
 /**
  * 预约线程核心文件，该定时器支持禁用（disable），推迟(postpone)，暂停(pause)，恢复(resume)操作，
+ * 不同状态之间的转换见/docs/status-flow.png
  * 除了关闭状态，或通过调用disable方法会清除定时器之外，其他状态下，通过setInterval设置的全局定时器，一直处于运行状态。
  * 定时器包含不同的状态，各个状态之间的转化图见document.md.
  * 核心思路：每一个状态开始时都会记录下startTime，每一秒钟都要判断是否该进入下一个状态，
@@ -87,6 +88,7 @@ class ScheduleTimer extends EventEmitter {
   }
 
   public pause() {
+    // TODO 目前只能在working状态下暂停，未来会支持在delaying状态下暂停
     if (this.globalStatus === STATUS.working) {
       this.globalStatus = STATUS.paused;
       this.pausedTime = getTimestamp();
@@ -94,6 +96,7 @@ class ScheduleTimer extends EventEmitter {
   }
 
   public resume() {
+    // TODO 目前只能从暂停状态恢复到working状态，未来会支持恢复到delaying状态
     if (this.globalStatus === STATUS.paused) {
       this.globalStatus = STATUS.working;
       const currentTime = getTimestamp();
