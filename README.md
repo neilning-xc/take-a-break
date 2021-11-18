@@ -42,6 +42,9 @@ Neil Ning: ningcorder@foxmail.com
 
 ## Contribution
 
+Status flow:
+![status-flow.png](docs/status-flow.png)
+
 ## License
 
 MIT © [Take a break](https://github.com/neilning-xc/take-a-break)
