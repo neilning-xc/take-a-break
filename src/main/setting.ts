@@ -12,12 +12,20 @@
  */
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
-import { BrowserWindow, ipcMain, IpcMainEvent, dialog, app } from 'electron';
+import {
+  BrowserWindow,
+  ipcMain,
+  IpcMainEvent,
+  dialog,
+  app,
+  screen,
+} from 'electron';
 import ReactBrowserWindow from '../libs/ReactBrowserWindow';
 import DB from '../libs/DB';
 import { CURRENT_ID, EXCLUDES, PREFERENCE, PROCESS_STAT } from '../constants';
 import store from '../libs/ElectronStore';
 import '../libs/Process';
+import { isProd } from './util';
 
 let settingWindow: BrowserWindow | null = null;
 
@@ -27,9 +35,12 @@ const createSettingWindow = () => {
     settingWindow?.focus();
     return settingWindow;
   }
+
+  const primaryDisplay = screen.getPrimaryDisplay();
+  const { width, height } = primaryDisplay.workArea;
   const reactBrowserWindow = ReactBrowserWindow.CreateWindow({
-    width: 800,
-    height: 600,
+    width: isProd ? 800 : width,
+    height: isProd ? 600 : height,
     pathname: '#/setting/preference',
     fullscreenable: false,
     maximizable: process.env.NODE_ENV !== 'production',
