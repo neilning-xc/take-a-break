@@ -66,7 +66,7 @@ const handlePauseClick = () => {
   createTray();
 };
 const handleBreakClick = () => {
-  scheduleTimer.break();
+  scheduleTimer.emit('break');
   // eslint-disable-next-line @typescript-eslint/no-use-before-define
   createTray();
 };
@@ -75,7 +75,6 @@ const init = async () => {
   if (process.platform === 'darwin') {
     app.dock.setIcon(getAssetPath('icon.png'));
   }
-  // settingWindow = await createSettingWindow();
   const count = DB('schedule').count();
   if (count > 0) {
     if (store.has(CURRENT_ID) && store.get(CURRENT_ID) !== 0) {
@@ -91,31 +90,32 @@ const init = async () => {
 const createTray = () => {
   if (tray == null) {
     tray = new Tray(getAssetPath('icons/16x16.png'));
-    tray.setToolTip('Take a break');
-
-    const menuItems: (MenuItemConstructorOptions | MenuItem)[] = [
-      { label: '设置', type: 'normal', click: handleSettingClick },
-      { label: '退出', type: 'normal', click: handleQuitClick },
-    ];
-
-    if (scheduleTimer.globalStatus === STATUS.working) {
-      menuItems.concat([
-        { label: '休息', type: 'normal', click: handleBreakClick },
-        { label: '暂停', type: 'normal', click: handlePauseClick },
-      ]);
-    }
-
-    if (scheduleTimer.globalStatus === STATUS.paused) {
-      menuItems.push({
-        label: '恢复',
-        type: 'normal',
-        click: handleResumeClick,
-      });
-    }
-
-    const contextMenu = Menu.buildFromTemplate(menuItems);
-    tray.setContextMenu(contextMenu);
   }
+  tray.setToolTip('Take a break');
+
+  const menuItems: (MenuItemConstructorOptions | MenuItem)[] = [
+    { label: '设置', type: 'normal', click: handleSettingClick },
+    { label: '退出', type: 'normal', click: handleQuitClick },
+    { type: 'separator' },
+  ];
+
+  if (scheduleTimer.globalStatus === STATUS.working) {
+    menuItems.push(
+      { label: '休息', type: 'normal', click: handleBreakClick },
+      { label: '暂停', type: 'normal', click: handlePauseClick }
+    );
+  }
+
+  if (scheduleTimer.globalStatus === STATUS.paused) {
+    menuItems.push({
+      label: '恢复',
+      type: 'normal',
+      click: handleResumeClick,
+    });
+  }
+
+  const contextMenu = Menu.buildFromTemplate(menuItems);
+  tray.setContextMenu(contextMenu);
 };
 
 /**
