@@ -94,7 +94,6 @@ const createTray = () => {
 
   const menuItems: (MenuItemConstructorOptions | MenuItem)[] = [
     { label: '设置', type: 'normal', click: handleSettingClick },
-    { label: '退出', type: 'normal', click: handleQuitClick },
     { type: 'separator' },
   ];
 
@@ -112,6 +111,11 @@ const createTray = () => {
       click: handleResumeClick,
     });
   }
+
+  menuItems.push(
+    { type: 'separator' },
+    { label: '退出', type: 'normal', click: handleQuitClick }
+  );
 
   const contextMenu = Menu.buildFromTemplate(menuItems);
   tray.setContextMenu(contextMenu);
