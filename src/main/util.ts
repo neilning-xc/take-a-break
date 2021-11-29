@@ -45,3 +45,5 @@ export const installExtensions = async () => {
 export const getTimestamp = () => {
   return Math.floor(new Date().getTime() / 1000);
 };
+
+export const isProd = process.env.NODE_ENV === 'production';

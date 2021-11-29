@@ -3,18 +3,24 @@
 /* eslint global-require: off, no-console: off */
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
-import { app, BrowserWindow, Menu, Tray } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  Menu,
+  MenuItem,
+  MenuItemConstructorOptions,
+  Tray,
+} from 'electron';
 import * as Preference from '../libs/Preference';
 import { getAssetPath } from './util';
 import { formatTime } from '../renderer/views/util';
-import { CURRENT_ID } from '../constants';
+import { CURRENT_ID, STATUS } from '../constants';
 import createSettingWindow from './setting';
 import { setupTimeoutById } from './overlay';
 import DB from '../libs/DB';
 import ScheduleTimer from '../libs/ScheduleTimer';
 import store from '../libs/ElectronStore';
 import AppUpdater from '../libs/AppUpdater';
-import pkg from '../../package.json';
 
 // 获取schedule线程实例
 const scheduleTimer = ScheduleTimer.getInstance();
@@ -48,11 +54,26 @@ const handleQuitClick = () => {
   app.quit();
 };
 
+const handleResumeClick = () => {
+  scheduleTimer.resume();
+  // eslint-disable-next-line @typescript-eslint/no-use-before-define
+  createTray();
+};
+const handlePauseClick = () => {
+  scheduleTimer.pause();
+  // eslint-disable-next-line @typescript-eslint/no-use-before-define
+  createTray();
+};
+const handleBreakClick = () => {
+  scheduleTimer.emit('break');
+  // eslint-disable-next-line @typescript-eslint/no-use-before-define
+  createTray();
+};
+
 const init = async () => {
   if (process.platform === 'darwin') {
     app.dock.setIcon(getAssetPath('icon.png'));
   }
-  // settingWindow = await createSettingWindow();
   const count = DB('schedule').count();
   if (count > 0) {
     if (store.has(CURRENT_ID) && store.get(CURRENT_ID) !== 0) {
@@ -68,13 +89,36 @@ const init = async () => {
 const createTray = () => {
   if (tray == null) {
     tray = new Tray(getAssetPath('icons/16x16.png'));
-    tray.setToolTip('Take a break');
-    const contextMenu = Menu.buildFromTemplate([
-      { label: '设置', type: 'normal', click: handleSettingClick },
-      { label: '退出', type: 'normal', click: handleQuitClick },
-    ]);
-    tray.setContextMenu(contextMenu);
   }
+  tray.setToolTip('Take a break');
+
+  const menuItems: (MenuItemConstructorOptions | MenuItem)[] = [
+    { label: '设置', type: 'normal', click: handleSettingClick },
+    { type: 'separator' },
+  ];
+
+  if (scheduleTimer.globalStatus === STATUS.working) {
+    menuItems.push(
+      { label: '休息', type: 'normal', click: handleBreakClick },
+      { label: '暂停', type: 'normal', click: handlePauseClick }
+    );
+  }
+
+  if (scheduleTimer.globalStatus === STATUS.paused) {
+    menuItems.push({
+      label: '恢复',
+      type: 'normal',
+      click: handleResumeClick,
+    });
+  }
+
+  menuItems.push(
+    { type: 'separator' },
+    { label: '退出', type: 'normal', click: handleQuitClick }
+  );
+
+  const contextMenu = Menu.buildFromTemplate(menuItems);
+  tray.setContextMenu(contextMenu);
 };
 
 /**
@@ -116,14 +160,4 @@ app.on('activate', () => {
     settingWindow.show();
     settingWindow.focus();
   }
-});
-
-// TODO 使用默认的about面板，未来可以使用https://www.npmjs.com/package/electron-about 替换
-app.setAboutPanelOptions({
-  applicationName: pkg.productName,
-  applicationVersion: pkg.version,
-  copyright: `MIT © ${pkg.productName}`,
-  authors: ['Neil Ning: ningcorder@foxmail.com'],
-  website: 'https://github.com/neilning-xc/take-a-break/releases',
-  iconPath: getAssetPath('icons/64x64.png'), // It doesn't work on MacOS
 });
