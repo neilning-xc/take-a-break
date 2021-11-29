@@ -6,6 +6,10 @@ import {
   MenuItemConstructorOptions,
 } from 'electron';
 
+import openAboutWindow from 'about-window';
+import { getAssetPath, isProd } from './util';
+import pkg from '../../package.json';
+
 interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
   selector?: string;
   submenu?: DarwinMenuItemConstructorOptions[] | Menu;
@@ -58,7 +62,15 @@ export default class MenuBuilder {
       submenu: [
         {
           label: '关于Take a break',
-          selector: 'orderFrontStandardAboutPanel:',
+          click: () => {
+            openAboutWindow({
+              icon_path: getAssetPath('icons/256x256.png'),
+              product_name: `${pkg.productName} `,
+              homepage: 'https://github.com/neilning-xc/take-a-break/releases',
+              copyright: `MIT © ${pkg.productName}`,
+              open_devtools: !isProd,
+            });
+          },
         },
         { type: 'separator' },
         {
@@ -82,22 +94,6 @@ export default class MenuBuilder {
         },
       ],
     };
-    // const subMenuEdit: DarwinMenuItemConstructorOptions = {
-    //   label: 'Edit',
-    //   submenu: [
-    //     { label: 'Undo', accelerator: 'Command+Z', selector: 'undo:' },
-    //     { label: 'Redo', accelerator: 'Shift+Command+Z', selector: 'redo:' },
-    //     { type: 'separator' },
-    //     { label: 'Cut', accelerator: 'Command+X', selector: 'cut:' },
-    //     { label: 'Copy', accelerator: 'Command+C', selector: 'copy:' },
-    //     { label: 'Paste', accelerator: 'Command+V', selector: 'paste:' },
-    //     {
-    //       label: 'Select All',
-    //       accelerator: 'Command+A',
-    //       selector: 'selectAll:',
-    //     },
-    //   ],
-    // };
     const subMenuViewDev: MenuItemConstructorOptions = {
       label: '视图',
       submenu: [

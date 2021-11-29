@@ -21,7 +21,6 @@ import DB from '../libs/DB';
 import ScheduleTimer from '../libs/ScheduleTimer';
 import store from '../libs/ElectronStore';
 import AppUpdater from '../libs/AppUpdater';
-import pkg from '../../package.json';
 
 // 获取schedule线程实例
 const scheduleTimer = ScheduleTimer.getInstance();
@@ -157,14 +156,4 @@ app.on('activate', () => {
     settingWindow.show();
     settingWindow.focus();
   }
-});
-
-// TODO 使用默认的about面板，未来可以使用https://www.npmjs.com/package/electron-about 替换
-app.setAboutPanelOptions({
-  applicationName: pkg.productName,
-  applicationVersion: pkg.version,
-  copyright: `MIT © ${pkg.productName}`,
-  authors: ['Neil Ning: ningcorder@foxmail.com'],
-  website: 'https://github.com/neilning-xc/take-a-break/releases',
-  iconPath: getAssetPath('icons/64x64.png'), // It doesn't work on MacOS
 });
