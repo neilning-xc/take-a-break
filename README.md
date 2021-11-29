@@ -27,6 +27,7 @@ Go to [release page](https://github.com/neilning-xc/take-a-break/releases) to in
 Start the app in the `dev` environment:
 
 ```bash
+yarn
 yarn start
 ```
 
@@ -43,6 +44,7 @@ Neil Ning: ningcorder@foxmail.com
 ## Contribution
 
 Status flow:
+
 ![status-flow.png](docs/status-flow.png)
 
 ## License
