@@ -15,7 +15,8 @@
     "start:main": "cross-env NODE_ENV=development electron -r ./.erb/scripts/babel-register ./src/main/main.ts",
     "start:renderer": "cross-env NODE_ENV=development webpack serve --config ./.erb/configs/webpack.config.renderer.dev.babel.js",
     "test": "jest",
-    "cm": "cz"
+    "cm": "cz",
+    "release": "standard-version"
   },
   "build": {
     "productName": "Take a break",
@@ -191,6 +192,7 @@
     "rimraf": "^3.0.0",
     "sass": "^1.32.12",
     "sass-loader": "^11.0.1",
+    "standard-version": "^9.3.2",
     "style-loader": "^2.0.0",
     "terser-webpack-plugin": "^5.1.1",
     "typescript": "^4.2.4",
