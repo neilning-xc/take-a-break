@@ -4,14 +4,20 @@ import Main from './views/Main';
 import Setting from './views/Setting';
 import Action from './views/Action';
 
-export default function App() {
+export function App() {
+  return (
+    <Switch>
+      <Route path="/setting" component={Setting} />
+      <Route path="/action" component={Action} />
+      <Route path="/" component={Main} />
+    </Switch>
+  );
+}
+
+export default function RouterApp() {
   return (
     <Router>
-      <Switch>
-        <Route path="/setting" component={Setting} />
-        <Route path="/action" component={Action} />
-        <Route path="/" component={Main} />
-      </Switch>
+      <App />
     </Router>
   );
 }
