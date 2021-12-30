@@ -47,6 +47,8 @@ Status flow:
 
 ![status-flow.png](docs/status-flow.png)
 
+This repository follow the [Conventional Commits Specification](https://conventionalcommits.org), and take advantage of [commitizen](https://github.com/commitizen/cz-cli) to help write the correct commit message, so if you have no commitizen installed on your machine, you have to commit code by running `yarn cm`.
+
 ## License
 
 MIT © [Take a break](https://github.com/neilning-xc/take-a-break)
