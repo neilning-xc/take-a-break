@@ -1,6 +1,6 @@
 import React from 'react';
 import '@testing-library/jest-dom';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
 import { App } from '../renderer/App';
@@ -10,14 +10,14 @@ describe('App', () => {
     const history = createMemoryHistory();
     history.push('/action');
 
-    const app = render(
+    render(
       <Router history={history}>
         <App />
       </Router>
     );
 
-    expect(app.getByText('跳过')).toBeInTheDocument();
-    expect(app.getByText('推迟')).toBeInTheDocument();
+    expect(screen.getByText('跳过')).toBeInTheDocument();
+    expect(screen.getByText('推迟')).toBeInTheDocument();
   });
 
   it('render Main', () => {
@@ -33,6 +33,12 @@ describe('App', () => {
   });
 
   it('render Setting', () => {
+    jest.mock('react-router-dom', () => {
+      return {
+        Switch: <div />,
+      };
+    });
+
     const history = createMemoryHistory();
     history.push('setting/preference');
 
