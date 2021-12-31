@@ -18,36 +18,19 @@ describe('App', () => {
 
     expect(screen.getByText('跳过')).toBeInTheDocument();
     expect(screen.getByText('推迟')).toBeInTheDocument();
+    expect(screen).toMatchSnapshot();
   });
 
   it('render Main', () => {
     const history = createMemoryHistory();
 
-    const app = render(
+    render(
       <Router history={history}>
         <App />
       </Router>
     );
 
-    expect(app.getByRole('img')).toBeInTheDocument();
-  });
-
-  it('render Setting', () => {
-    jest.mock('react-router-dom', () => {
-      return {
-        Switch: <div />,
-      };
-    });
-
-    const history = createMemoryHistory();
-    history.push('setting/preference');
-
-    const app = render(
-      <Router history={history}>
-        <App />
-      </Router>
-    );
-
-    expect(app.getByRole('checkbox')).toBeInTheDocument();
+    expect(screen.getByRole('img')).toBeInTheDocument();
+    expect(screen).toMatchSnapshot();
   });
 });
