@@ -13,6 +13,12 @@ Object.defineProperty(window, 'electron', {
       getExcludes: jest.fn(() => {
         return [];
       }),
+      getSchedules: jest.fn(() => {
+        return [];
+      }),
+      getCurrentId: jest.fn(() => {
+        return 0;
+      }),
     },
   },
 });
