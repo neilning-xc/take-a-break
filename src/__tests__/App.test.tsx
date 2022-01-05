@@ -1,9 +1,8 @@
 import React from 'react';
 import '@testing-library/jest-dom';
-import { render, screen } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
-import { act } from 'react-dom/test-utils';
 import { App } from '../renderer/App';
 
 describe('App', () => {

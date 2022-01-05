@@ -1,3 +1,5 @@
+import { STATUS } from './src/constants';
+
 Object.defineProperty(window, 'electron', {
   value: {
     ipcRenderer: {
@@ -19,6 +21,11 @@ Object.defineProperty(window, 'electron', {
       getCurrentId: jest.fn(() => {
         return 0;
       }),
+      addConfig: jest.fn((data) => {
+        return data;
+      }),
+      updateConfig: jest.fn(),
+      getStatus: jest.fn(() => STATUS.working),
     },
   },
 });

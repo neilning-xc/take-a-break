@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Schedule Component render ScheduleForm 1`] = `
+exports[`MenuItem Component render MenuItem 1`] = `
 Object {
   "debug": [Function],
   "findAllByAltText": [Function],

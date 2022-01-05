@@ -1,7 +1,10 @@
 import React from 'react';
 import '@testing-library/jest-dom';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import ScheduleForm from '../renderer/components/ScheduleForm';
+
+const { ipcRenderer } = electron;
 
 let data: Schedule;
 beforeEach(() => {
@@ -25,10 +28,14 @@ describe('Schedule Component', () => {
 
   it('update form', () => {
     render(<ScheduleForm data={data} />);
+    const spy = jest.spyOn(ipcRenderer, 'addConfig');
     const nameInput = screen.getByPlaceholderText('请填写名称');
-    fireEvent.change(nameInput, { target: { value: '休息计划一' } });
-    expect(nameInput.value).toBe('休息计划一');
-    const saveBtn = screen.getByText('保存');
-    fireEvent.click(saveBtn);
+    userEvent.type(nameInput, '一');
+    expect((nameInput as any).value).toBe('休息计划一');
+    const saveBtn = screen.getByRole('button', { name: '保 存' });
+    userEvent.click(saveBtn);
+
+    ipcRenderer.addConfig();
+    expect(spy).toHaveBeenCalled();
   });
 });
