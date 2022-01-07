@@ -30,26 +30,19 @@ describe('MenuItem Component', () => {
     expect(screen).toMatchSnapshot();
   });
 
-  it('click MenuItem', async () => {
+  it('hover MenuItem', async () => {
     render(<MenuItem currentId={data.id} data={data} />);
 
-    // expect(screen.queryByText('休息')).not.toBeInTheDocument();
-    // expect(screen.queryByText('暂停')).not.toBeInTheDocument();
-
     const hoverBtn = screen.getByRole('button', { name: 'setting 其他' });
-    screen.debug(hoverBtn);
+
+    expect(screen.queryByText('休息')).not.toBeInTheDocument();
+    expect(screen.queryByText('暂停')).not.toBeInTheDocument();
+
     userEvent.hover(hoverBtn);
 
     await waitFor(() => {
       expect(screen.queryByText('休息')).toBeInTheDocument();
       expect(screen.queryByText('暂停')).toBeInTheDocument();
-    });
-
-    userEvent.unhover(hoverBtn);
-
-    await waitFor(() => {
-      expect(screen.queryByText('休息')).not.toBeInTheDocument();
-      expect(screen.queryByText('暂停')).not.toBeInTheDocument();
     });
   });
 });
