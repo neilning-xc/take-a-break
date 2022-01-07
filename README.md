@@ -2,6 +2,7 @@
 
 ![test](https://github.com/neilning-xc/take-a-break/actions/workflows/test.yml/badge.svg)
 ![publish](https://github.com/neilning-xc/take-a-break/actions/workflows/publish.yml/badge.svg)
+![GitHub](https://img.shields.io/github/license/neilning-xc/take-a-break)
 
 </div>
 
