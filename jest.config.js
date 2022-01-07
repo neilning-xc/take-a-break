@@ -6,7 +6,13 @@ module.exports = {
     '\\.(css|less|sass|scss)$': 'identity-obj-proxy',
   },
   moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json'],
-  moduleDirectories: ['node_modules', 'build/app/node_modules'],
+  moduleDirectories: ['node_modules', 'build/app/node_modules', 'src'],
   setupFiles: ['./.erb/scripts/check-build-exists.js'],
   setupFilesAfterEnv: ['./jest.setup.js'],
+  // coverageDirectory: 'src',
+  collectCoverageFrom: [
+    'src/**/*.{ts,js,tsx}',
+    '!src/**/*.{d.ts}',
+    '!src/constants.ts',
+  ],
 };
