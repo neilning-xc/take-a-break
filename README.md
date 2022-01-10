@@ -3,6 +3,7 @@
 ![test](https://github.com/neilning-xc/take-a-break/actions/workflows/test.yml/badge.svg)
 ![publish](https://github.com/neilning-xc/take-a-break/actions/workflows/publish.yml/badge.svg)
 ![GitHub](https://img.shields.io/github/license/neilning-xc/take-a-break)
+[![Coverage Status](https://coveralls.io/repos/github/neilning-xc/take-a-break/badge.svg?branch=master)](https://coveralls.io/github/neilning-xc/take-a-break?branch=master)
 
 </div>
 
