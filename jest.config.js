@@ -7,12 +7,12 @@ module.exports = {
   },
   moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json'],
   moduleDirectories: ['node_modules', 'build/app/node_modules', 'src'],
-  setupFiles: ['./.erb/scripts/check-build-exists.js'],
+  setupFiles: ['./.erb/scripts/check-build-exists.js', 'jest-date-mock'],
   setupFilesAfterEnv: ['./jest.setup.js'],
   // coverageDirectory: 'src',
   collectCoverageFrom: [
     'src/**/*.{ts,js,tsx}',
-    '!src/**/*.{d.ts}',
+    '!src/**/*.d.ts',
     '!src/constants.ts',
   ],
 };

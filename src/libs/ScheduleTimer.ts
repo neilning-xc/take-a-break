@@ -106,6 +106,7 @@ class ScheduleTimer extends EventEmitter {
   }
 
   public skip() {
+    // 只用当前是状态时休息状态时，才能跳过
     if (this.globalStatus === STATUS.breaking) {
       this.globalStatus = STATUS.working;
       this.startTime = getTimestamp();
@@ -137,6 +138,7 @@ class ScheduleTimer extends EventEmitter {
       this.globalStatus === STATUS.working ||
       this.globalStatus === STATUS.delaying
     ) {
+      // TODO 强制进入休息状态时应该emit break事件
       this.globalStatus = STATUS.breaking;
       this.startTime = getTimestamp();
     }

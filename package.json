@@ -182,6 +182,7 @@
     "husky": "4.x.x",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^26.1.0",
+    "jest-date-mock": "^1.0.8",
     "lint-staged": "^10.5.4",
     "mini-css-extract-plugin": "^1.6.0",
     "opencollective-postinstall": "^2.0.3",
