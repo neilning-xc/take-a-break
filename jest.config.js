@@ -12,7 +12,7 @@ module.exports = {
   // coverageDirectory: 'src',
   collectCoverageFrom: [
     'src/**/*.{ts,js,tsx}',
-    '!src/**/*.{d.ts}',
+    '!src/**/*.d.ts',
     '!src/constants.ts',
   ],
 };
