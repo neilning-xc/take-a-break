@@ -14,9 +14,9 @@ import store from '../libs/ElectronStore';
 // 获取schedule线程实例
 const scheduleTimer = ScheduleTimer.getInstance();
 
-let overlayWindow: BrowserWindow | null = null;
-let childWindow: BrowserWindow | null = null;
-const externalWindows: BrowserWindow[] = [];
+let overlayWindow: BrowserWindow | null = null; // 主窗口
+let childWindow: BrowserWindow | null = null; // 跳过和推迟按钮所在窗口
+let externalWindows: BrowserWindow[] = []; // 带有背景图标的窗口， 数量等于显示器数量
 
 const mainOption = {
   frame: false,
@@ -39,12 +39,20 @@ const createOverlayWindow = () => {
   overlayWindow = reactBrowserWindow.browserWindow;
 };
 
+// 调用destroy方法释放窗口占用的内存
 const hideOverlay = () => {
-  overlayWindow?.hide();
-  childWindow?.hide();
+  // overlayWindow?.hide();
+  // childWindow?.hide();
+  overlayWindow?.destroy();
+  childWindow?.destroy();
+
+  overlayWindow = null;
+  childWindow = null;
   for (const window of externalWindows) {
-    window?.hide();
+    window.destroy();
+    // window?.hide();
   }
+  externalWindows = [];
 };
 
 const showOverlay = () => {
@@ -58,6 +66,8 @@ const showOverlay = () => {
   overlayWindow?.setAlwaysOnTop(true, 'screen-saver');
 
   const displays = screen.getAllDisplays();
+
+  // console.log(externalWindows.length);
 
   // TODO 重复创建window？是否有性能问题？
   for (let i = 0; i < displays.length; i++) {
